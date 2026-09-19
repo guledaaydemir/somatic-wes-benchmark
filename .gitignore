@@ -1,0 +1,13 @@
+data/raw/
+data/derived/
+*.vcf
+*.vcf.gz
+*.tbi
+*.bed
+*.parquet
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.DS_Store
+._*
+.claude/settings.local.json
