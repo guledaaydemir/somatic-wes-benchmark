@@ -1,0 +1,10 @@
+testcase,filepath
+novo/somaticSniper,vcf/validated_vcfs/FD/novo/somaticSniper/WES_FD_1.novo.somaticSniper.vcf
+novo/strelka,vcf/validated_vcfs/FD/novo/strelka/WES_FD_1.novo.strelka.vcf
+novo/mutect,vcf/validated_vcfs/FD/novo/mutect/WES_FD_1.novo.muTect2.vcf
+bwa/somaticSniper,vcf/validated_vcfs/FD/bwa/somaticSniper/WES_FD_1.bwa.somaticSniper.vcf
+bwa/strelka,vcf/validated_vcfs/FD/bwa/strelka/WES_FD_1.bwa.strelka.vcf
+bwa/mutect,vcf/validated_vcfs/FD/bwa/mutect/WES_FD_1.bwa.muTect2.vcf
+bowtie/somaticSniper,vcf/validated_vcfs/FD/bowtie/somaticSniper/WES_FD_1.bowtie.somaticSniper.vcf
+bowtie/strelka,vcf/validated_vcfs/FD/bowtie/strelka/WES_FD_1.bowtie.strelka.vcf
+bowtie/mutect,vcf/validated_vcfs/FD/bowtie/mutect/WES_FD_1.bowtie.muTect2.vcf

@@ -1,0 +1,16 @@
+runs: 480; regions: 6; truth variants: 1161
+filters: corrected = io.bed_filter (analysis); legacy = io.bed_filter_legacy (parity and comparison only)
+legacy filter matches positions across chromosomes (D1); both filters use start <= POS < end
+(D2, undecided); metrics use the whole truth set (D9)
+corrected: 8 (run, region) pairs keep no variants, precision and F1 left blank: {'GRCh38_alllowmapandsegdupregions': ['140', '286', '428', '574'], 'GRCh38_segdups': ['140', '286', '428', '574']}
+
+variants kept, all runs pooled:
+                               region  runs  variants_in  kept_legacy  kept_corrected  kept_difference  fraction_legacy  fraction_corrected  runs_empty_corrected
+           GRCh38_alldifficultregions   480       692587       640231          206951           433280         0.924405            0.298809                     0
+     GRCh38_alllowmapandsegdupregions   480       692587       523227           27551           495676         0.755468            0.039780                     4
+      GRCh38_notinalldifficultregions   480       692587       690451          485636           204815         0.996916            0.701191                     0
+GRCh38_notinalllowmapandsegdupregions   480       692587       692563          665036            27527         0.999965            0.960220                     0
+                  GRCh38_notinsegdups   480       692587       692571          666720            25851         0.999977            0.962652                     0
+                       GRCh38_segdups   480       692587       419479           25867           393612         0.605670            0.037348                     4
+
+python 3.8.12 | pandas 2.0.0 | numpy 1.24.2

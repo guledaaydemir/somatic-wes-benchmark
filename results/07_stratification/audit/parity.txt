@@ -1,0 +1,8 @@
+parity: PASS (7 checks)
+PASS  legacy has one row per run and region  [2880 rows]
+PASS  legacy filter covers exactly the published (run, region) rows  [{'both': 2880, 'left_only': 0, 'right_only': 0}]
+PASS  legacy filter: iou == union_metrics.csv Inter/Union  [max |diff| 1.67e-16]
+PASS  legacy filter: precision == union_metrics.csv Precision  [max |diff| 2.22e-16]
+PASS  legacy filter: recall == union_metrics.csv Recall  [max |diff| 2.22e-16]
+PASS  legacy filter: f1 == union_metrics.csv f1_score  [max |diff| 2.22e-16]
+PASS  whole-study rows == unfiltered sets vs truth set (all 1440 rows)  [max |diff| 2.22e-16]

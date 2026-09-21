@@ -1,0 +1,4 @@
+parity: PASS (3 checks)
+PASS  run keys == legacy vcfcomparison_df_full  [480 runs]
+PASS  VCF paths == legacy vcf_filenames.csv
+PASS  metadata columns == legacy (21 columns)  [{}]

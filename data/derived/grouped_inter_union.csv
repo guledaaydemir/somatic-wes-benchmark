@@ -1,0 +1,31 @@
+Sample1,Inter/Union,Parameter
+EA,1.0,Computing Environment
+FD,1.0,Computing Environment
+IL,1.0,Computing Environment
+LL,1.0,Computing Environment
+NC,1.0,Computing Environment
+EA,0.6016666666666668,Mapper
+FD,0.5050000000000004,Mapper
+IL,0.6283333333333333,Mapper
+LL,0.5891666666666665,Mapper
+NC,0.6550000000000001,Mapper
+EA,0.48333333333333317,Variant Caller
+FD,0.33833333333333343,Variant Caller
+IL,0.5208333333333329,Variant Caller
+LL,0.37708333333333366,Variant Caller
+NC,0.5191666666666668,Variant Caller
+EA,0.8841666666666668,Base Recalibration
+FD,0.7258333333333331,Base Recalibration
+IL,0.828333333333334,Base Recalibration
+LL,0.8300000000000005,Base Recalibration
+NC,0.9083333333333331,Base Recalibration
+EA,1.0,Mark Duplicates
+FD,1.0,Mark Duplicates
+IL,1.0,Mark Duplicates
+LL,1.0,Mark Duplicates
+NC,1.0,Mark Duplicates
+EA,0.8241666666666667,Trimming
+FD,0.6700000000000004,Trimming
+IL,0.8575000000000004,Trimming
+LL,0.7149999999999997,Trimming
+NC,0.8358333333333334,Trimming

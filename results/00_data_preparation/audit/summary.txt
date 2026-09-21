@@ -1,0 +1,7 @@
+runs: 480
+design: 5 Sample x 2 Environment x 2 isTrimmed x 2 baseRecalibration x 2 Mapper x 3 VariantCaller x 2 Duplicates, one run per combination
+TestCases.csv rows: 864 (rows without a VCF folder are not runs)
+VCF folders with a real VCF: 480; AppleDouble '._' files skipped: 405
+join: canon(TestCaseNo); equals the legacy row-position join for all 864 rows
+truth VCF and exome BED present and non-empty
+python 3.8.12 | pandas 2.0.0

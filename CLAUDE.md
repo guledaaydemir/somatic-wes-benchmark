@@ -72,16 +72,36 @@ Every notebook has these sections, in order:
 - Do not refactor code you were not asked to touch.
 - Ask before deviating from these rules.
 
-## Paths on this machine
-- Repository root: /Users/guledaaydemir/Documents/Bioinformatics-StabilityAnalysis/somatic-wes-benchmark
-- Raw VCFs and BED live on an external drive and are NOT inside this repository.
-  `src/swb/config.py` reads the environment variable `SWB_DATA_ROOT`, defaulting to
-  "/Volumes/E4 Pro/Bioinformatics-StabilityAnalysis". Never hard-code an absolute path
-  in a notebook.
-- `legacy/` and `data/derived/` are copies from the external drive, already present.
-- Notebooks are executed by the user in Jupyter, not by Claude Code. Write the code and
-  the parity assertions; do not attempt to run notebooks that need the raw VCFs.
+## Data and paths — THE REPOSITORY IS SELF-CONTAINED
+
+The repository must run on a reviewer's machine with nothing outside it.
+
+- **Never write an absolute path.** No `/Volumes/`, no `/Users/`, no home directory.
+- Every path is relative to the repository root, resolved in `src/swb/config.py`:
+
+      REPO_ROOT = Path(__file__).resolve().parents[2]
+      DATA      = REPO_ROOT / "data"
+      RAW_SNV   = DATA / "raw" / "snv"        # 480 per-run SNV VCFs  (gitignored)
+      RAW_INDEL = DATA / "raw" / "indel"      # 320 per-run indel VCFs (gitignored)
+      TRUTH     = DATA / "truth"
+      REFERENCE = DATA / "reference"
+      DERIVED   = DATA / "derived"
+      RESULTS   = REPO_ROOT / "results"
+
+- `SWB_DATA_ROOT` is REMOVED. Delete every reference to it.
+- The BED and stratification files are gzipped (`.bed.gz`). Read them with gzip.
+- Two tiers:
+  * Committed: `data/truth/`, `data/reference/`, small CSVs in `data/derived/`.
+  * Local only: `data/raw/` (raw VCFs) and `data/derived/*.parquet` caches.
+- **Notebooks 02 onward must run from the committed cache alone.** Only notebook 01
+  (which builds the cache) and analyses that genuinely need raw VCF fields may read
+  `data/raw/`. Any notebook reading `data/raw/` states this in its Purpose section and
+  checks that the directory exists, failing with a clear message pointing to
+  `data/README.md` if it does not.
+
+## Execution
+Notebooks are executed by the user in Jupyter. Write code and parity assertions; do not
+attempt to run notebooks that read `data/raw/`.
 
 ## Environment
-Python 3.8, pandas 1.x, conda env `mywork2_rebuild_env`. Do not use pandas 2.x-only
-idioms. Pin `environment.yml` to what actually runs.
+Python 3.8, pandas 1.x, conda env `mywork2_rebuild_env`. No pandas 2.x-only idioms.
