@@ -1,0 +1,20 @@
+runs: 320; unordered pairs, self-pairs included: 51,360; ordered pairs: 102,400
+indel sets: read from the legacy cache data/derived/sets_dict_indels.csv, not re-parsed from VCFs
+compared with legacy: 20 recorded pair values (max |diff| 0.0e+00), 5 recorded grouped means (max |diff| 0.0e+00),
+  pair counts; NOT compared: the rest of the pair table and 25 of the 30 grouped means (legacy tables not kept)
+Result VCF Count is empty for the indel runs; legacy count used: filtering_df_indels 'After FilterPass'
+phase is empty for 64 of 320 runs (not used)
+
+rounding to 2 decimals (D12, undecided): largest change of a pair 0.0050, of a grouped mean 0.0015
+
+grouped mean IoU (2 decimals) by parameter, range over the 5 samples; n_pairs = ordered pairs per sample:
+                       n_pairs  min_mean_iou_2dp  max_mean_iou_2dp
+Parameter                                                         
+Computing Environment       64           1.00000           1.00000
+Mapper                      64           0.35250           0.49000
+Variant Caller              64           0.00000           0.00250
+Base Recalibration          64           0.83875           0.95625
+Mark Duplicates             64           1.00000           1.00000
+Trimming                    64           0.41250           0.68250
+
+python 3.8.12 | pandas 2.0.0

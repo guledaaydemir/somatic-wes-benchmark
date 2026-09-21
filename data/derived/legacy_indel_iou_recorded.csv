@@ -1,0 +1,28 @@
+source,kind,parameter,TestCase1,TestCase2,Sample,value
+StabilityAnalysis_Indels.ipynb cell 43 output,grouped_mean,Base Recalibration,,,ea,0.95625
+StabilityAnalysis_Indels.ipynb cell 43 output,grouped_mean,Base Recalibration,,,fd,0.8675
+StabilityAnalysis_Indels.ipynb cell 43 output,grouped_mean,Base Recalibration,,,il,0.83875
+StabilityAnalysis_Indels.ipynb cell 43 output,grouped_mean,Base Recalibration,,,ll,0.84875
+StabilityAnalysis_Indels.ipynb cell 43 output,grouped_mean,Base Recalibration,,,nc,0.88375
+StabilityAnalysis_Indels.ipynb cell 38 output,n_pairs_all,,,,,102400.0
+StabilityAnalysis_Indels.ipynb cell 39 output,n_pairs_same_5_environment_differs,,,,,1600.0
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/no/no/d/95/il/U,,0.42
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/no/m/135/ea/U,,1.0
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/yes/d/307/fd/A,,0.22
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/st/no/yes/m/300/fd/A,,0.0
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bo/mu/yes/no/m/135/ea/U,bw/mu/no/no/d/61/ll/A,,0.35
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bw/mu/no/yes/d/25/ll/U,bo/mu/no/yes/m/171/ea/A,,0.31
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/185/ea/A,,0.52
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/25/ll/U,,1.0
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/yes/no/d/149/ea/U,,0.57
+StabilityAnalysis_Indels.ipynb cell 38 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/st/yes/no/d/22/ll/U,,0.0
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/no/m/103/il/A,,0.39
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/no/m/167/ea/A,,1.0
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/no/m/231/nc/A,,0.34
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/no/m/295/fd/A,,0.22
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bo/mu/yes/no/m/135/ea/U,bo/mu/yes/no/m/39/ll/A,,0.29
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/121/il/A,,0.58
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/185/ea/A,,0.52
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/249/nc/A,,0.6
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/313/fd/A,,0.48
+StabilityAnalysis_Indels.ipynb cell 39 output,pair,,bw/mu/no/yes/d/25/ll/U,bw/mu/no/yes/d/57/ll/A,,1.0

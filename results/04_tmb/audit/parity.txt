@@ -1,0 +1,8 @@
+parity: PASS (5 checks, 2 skipped)
+PASS  both legacy TMB tables hold exactly the 480 runs  [480 runs]
+PASS  variants per run == legacy Result VCF Count (every run)  [480/480 match]
+PASS  tmb == legacy vcfcomparison_df_full TMB (every run)  [max |diff| 7.11e-15]
+PASS  tmb == legacy tmb_list_snp.csv (every run)  [max |diff| 3.55e-15]
+PASS  legacy TMB is not reproduced by the merged territory (D11)  [max |diff| 2.57e-02]
+SKIP  tmb_merged, tmb_by_setting.csv  [no legacy counterpart]
+SKIP  the figures and the Table 1 annotations under the panels of tmb_by_run  [the legacy figures were drawn from the same TMB values; the annotations come from manuscript Table 1]

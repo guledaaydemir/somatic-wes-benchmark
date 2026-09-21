@@ -1,0 +1,25 @@
+pipeline,Mapper,VariantCaller,isTrimmed,baseRecalibration,label
+0,BOWTIE,Mutect,NO,NO,BOWTIE+Mutect trim NO recal NO
+1,BOWTIE,Mutect,NO,YES,BOWTIE+Mutect trim NO recal YES
+2,BOWTIE,Mutect,YES,NO,BOWTIE+Mutect trim YES recal NO
+3,BOWTIE,Mutect,YES,YES,BOWTIE+Mutect trim YES recal YES
+4,BOWTIE,SomaticSniper,NO,NO,BOWTIE+SomaticSniper trim NO recal NO
+5,BOWTIE,SomaticSniper,NO,YES,BOWTIE+SomaticSniper trim NO recal YES
+6,BOWTIE,SomaticSniper,YES,NO,BOWTIE+SomaticSniper trim YES recal NO
+7,BOWTIE,SomaticSniper,YES,YES,BOWTIE+SomaticSniper trim YES recal YES
+8,BOWTIE,Strelka,NO,NO,BOWTIE+Strelka trim NO recal NO
+9,BOWTIE,Strelka,NO,YES,BOWTIE+Strelka trim NO recal YES
+10,BOWTIE,Strelka,YES,NO,BOWTIE+Strelka trim YES recal NO
+11,BOWTIE,Strelka,YES,YES,BOWTIE+Strelka trim YES recal YES
+12,BWA,Mutect,NO,NO,BWA+Mutect trim NO recal NO
+13,BWA,Mutect,NO,YES,BWA+Mutect trim NO recal YES
+14,BWA,Mutect,YES,NO,BWA+Mutect trim YES recal NO
+15,BWA,Mutect,YES,YES,BWA+Mutect trim YES recal YES
+16,BWA,SomaticSniper,NO,NO,BWA+SomaticSniper trim NO recal NO
+17,BWA,SomaticSniper,NO,YES,BWA+SomaticSniper trim NO recal YES
+18,BWA,SomaticSniper,YES,NO,BWA+SomaticSniper trim YES recal NO
+19,BWA,SomaticSniper,YES,YES,BWA+SomaticSniper trim YES recal YES
+20,BWA,Strelka,NO,NO,BWA+Strelka trim NO recal NO
+21,BWA,Strelka,NO,YES,BWA+Strelka trim NO recal YES
+22,BWA,Strelka,YES,NO,BWA+Strelka trim YES recal NO
+23,BWA,Strelka,YES,YES,BWA+Strelka trim YES recal YES

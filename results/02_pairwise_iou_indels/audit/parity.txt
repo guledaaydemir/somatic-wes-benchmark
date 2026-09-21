@@ -1,0 +1,8 @@
+parity: PASS (6 checks, 1 skipped)
+PASS  run settings == legacy vcfcomparison_full_indels (7 columns)  [{}]
+PASS  variants per run == legacy filtering_df_indels 'After FilterPass' (every run)  [320/320 match]
+PASS  ordered pairs == rows of the legacy pair table  [102,400 pairs]
+PASS  pairs with the same five settings and another environment == legacy filtered table rows  [1,600 pairs]
+PASS  iou_2dp == the 20 recorded legacy pair values  [max |diff| 0.00e+00]
+PASS  mean_iou_2dp == the 5 recorded legacy grouped means (Base Recalibration)  [max |diff| 0.00e+00]
+SKIP  the rest of the legacy indel pair table (102,380 pairs) and the other 25 grouped means  [dfs_indels/*.csv are not in the repository; only the printed values above are compared]

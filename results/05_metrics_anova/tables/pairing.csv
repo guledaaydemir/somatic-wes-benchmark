@@ -1,0 +1,7 @@
+comparison,n_pairs,n_matched
+Mapper: BWA vs BOWTIE,240,240
+VariantCaller: Mutect vs SomaticSniper,160,160
+VariantCaller: Mutect vs Strelka,160,160
+VariantCaller: SomaticSniper vs Strelka,160,160
+baseRecalibration: YES vs NO,240,72
+isTrimmed: YES vs NO,240,72

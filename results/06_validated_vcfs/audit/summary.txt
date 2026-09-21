@@ -1,0 +1,17 @@
+validated VCFs: 45 (5 centers x 9), parsed from data/reference/validated_vcfs; the folder NV (9 files) is not used
+parsed sets equal the legacy caches and file lists for every file
+truth set: 1161 SNVs
+
+intersection of each center's nine sets (size, of which indels, in the truth set):
+  LL: 2388, 0, 784
+  NC: 2386, 0, 781
+  EA: 2464, 0, 843
+  IL: 2520, 0, 879
+  FD: 2450, 0, 842
+
+D14: legacy cell 23 printed 'EA Validated Set Count: 2388'; that is the LL intersection (EA: 2464)
+D15: the validated sets keep their indels although the legacy section says 'without indels': 26,778 of the 575,670 distinct variants
+  the center intersections used in the Venn hold 0 indels in all
+not compared with legacy: validated_sets.csv, center_sets.csv, venn_regions.csv, the figure
+
+python 3.8.12 | pandas 2.0.0 | venn 0.1.3

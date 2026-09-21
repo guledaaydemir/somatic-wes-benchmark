@@ -1,0 +1,13 @@
+runs: 480; variants per run 377-3299; TMB 4.67-40.85 variants per Mb (median 15.27)
+territory of data/reference/sorted_exome_hc.bed.gz: 80,762,432 bp (raw sum of interval lengths, legacy; overlaps counted twice)
+  merged unique length 80,711,709 bp; tmb_merged is larger by at most 0.063% (D11, undecided)
+tmb reproduces the legacy TMB of both legacy tables for every run (max |diff| 7.1e-15)
+SomaticSniper is not PASS-filtered (FILTER is '.' on every record; legacy exemption preserved), Mutect and Strelka are:
+  pass_filter_applied is False for 160 runs
+not compared with legacy: tmb_merged, tmb_by_setting.csv, the figures
+panel order (increasing total yield, manuscript Table 1): LL, FD, NC, EA, IL
+
+median TMB by variant caller: {'Mutect': 13.5, 'SomaticSniper': 18.4, 'Strelka': 18.86}
+median TMB by isTrimmed, baseRecalibration: {'NO, NO': 14.03, 'NO, YES': 13.45, 'YES, NO': 17.01, 'YES, YES': 15.4}
+
+python 3.8.12 | pandas 2.0.0

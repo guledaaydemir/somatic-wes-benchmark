@@ -1,0 +1,59 @@
+region,n_sets,size
+EA validated,1,21
+EA validated + FD validated,2,3
+EA validated + IL validated,2,7
+EA validated + IL validated + FD validated,3,7
+FD validated,1,82
+High confidence,1,182
+High confidence + EA validated,2,8
+High confidence + EA validated + FD validated,3,6
+High confidence + EA validated + IL validated,3,17
+High confidence + EA validated + IL validated + FD validated,4,18
+High confidence + FD validated,2,21
+High confidence + IL validated,2,20
+High confidence + IL validated + FD validated,3,12
+High confidence + LL validated,2,13
+High confidence + LL validated + EA validated,3,3
+High confidence + LL validated + EA validated + FD validated,4,7
+High confidence + LL validated + EA validated + IL validated,4,5
+High confidence + LL validated + EA validated + IL validated + FD validated,5,45
+High confidence + LL validated + FD validated,3,8
+High confidence + LL validated + IL validated,3,8
+High confidence + LL validated + IL validated + FD validated,4,7
+High confidence + LL validated + NC validated,3,4
+High confidence + LL validated + NC validated + EA validated,4,3
+High confidence + LL validated + NC validated + EA validated + FD validated,5,6
+High confidence + LL validated + NC validated + EA validated + IL validated,5,30
+High confidence + LL validated + NC validated + EA validated + IL validated + FD validated,6,627
+High confidence + LL validated + NC validated + FD validated,4,2
+High confidence + LL validated + NC validated + IL validated,4,1
+High confidence + LL validated + NC validated + IL validated + FD validated,5,15
+High confidence + NC validated,2,7
+High confidence + NC validated + EA validated,3,2
+High confidence + NC validated + EA validated + FD validated,4,9
+High confidence + NC validated + EA validated + IL validated,4,10
+High confidence + NC validated + EA validated + IL validated + FD validated,5,47
+High confidence + NC validated + FD validated,3,1
+High confidence + NC validated + IL validated,3,6
+High confidence + NC validated + IL validated + FD validated,4,11
+IL validated,1,28
+IL validated + FD validated,2,1
+LL validated,1,90
+LL validated + EA validated,2,4
+LL validated + EA validated + IL validated,3,6
+LL validated + EA validated + IL validated + FD validated,4,21
+LL validated + IL validated + FD validated,3,5
+LL validated + NC validated,2,4
+LL validated + NC validated + EA validated + FD validated,4,3
+LL validated + NC validated + EA validated + IL validated,4,70
+LL validated + NC validated + EA validated + IL validated + FD validated,5,1384
+LL validated + NC validated + IL validated,3,3
+LL validated + NC validated + IL validated + FD validated,4,14
+NC validated,1,14
+NC validated + EA validated,2,4
+NC validated + EA validated + FD validated,3,8
+NC validated + EA validated + IL validated,3,15
+NC validated + EA validated + IL validated + FD validated,4,68
+NC validated + FD validated,2,6
+NC validated + IL validated,2,6
+NC validated + IL validated + FD validated,3,6

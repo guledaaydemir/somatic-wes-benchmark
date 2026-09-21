@@ -1,0 +1,10 @@
+parity: PASS (8 checks, 1 skipped)
+PASS  IoU, precision, recall and F1 == whole-study rows of union_metrics.csv (all 1440 rows)  [max |diff| 2.22e-16]
+PASS  F1 mean, max and min per sample == legacy cell 126 (15 values)  [max |diff| 4.36e-07]
+PASS  F1 mean, max and min over all runs == legacy cell 126  [max |diff| 5.55e-17]
+PASS  F1 of the first 5 runs == legacy cell 132  [max |diff| 4.35e-07]
+PASS  factor tests for precision == the 7 lines legacy cell 128 printed (statistic and p-value)  [7 lines]
+PASS  the printed 'Mapper' line is the base recalibration test, not the mapper test (D6)  [printed 13.601269; base recalibration 13.601269; mapper -13.717256]
+PASS  sources above 1% and their shares == legacy cell 134 (10 sources, same order)  [max |diff| 4.73e-07]
+PASS  shares of the same 10 sources in the 5-factor Type III ANOVA == legacy cell 134 (balanced design)  [max |diff| 4.73e-07]
+SKIP  recall and F1 tests, pairing.csv, the ANOVA terms below 1%, the Type III F statistics and p-values, the figures  [not printed by the legacy notebook; computed from the verified metrics]

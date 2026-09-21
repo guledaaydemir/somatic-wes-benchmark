@@ -1,0 +1,10 @@
+parity: PASS (9 checks)
+PASS  legacy pair table has one row per ordered pair of the 480 runs  [230400 rows]
+PASS  ordered pairs cover exactly the legacy pair table  [{'both': 230400, 'left_only': 0, 'right_only': 0}]
+PASS  iou_2dp == legacy df_generateds_r_p.csv Inter/Union (all 230,400 ordered pairs)  [max |diff| 0.00e+00]
+PASS  EA: iou_2dp == legacy df_ea.csv (9,216 pairs)  [max |diff| 0.00e+00]
+PASS  FD: iou_2dp == legacy df_fd.csv (9,216 pairs)  [max |diff| 0.00e+00]
+PASS  IL: iou_2dp == legacy df_il.csv (9,216 pairs)  [max |diff| 0.00e+00]
+PASS  LL: iou_2dp == legacy df_ll.csv (9,216 pairs)  [max |diff| 0.00e+00]
+PASS  NC: iou_2dp == legacy df_nc.csv (9,216 pairs)  [max |diff| 0.00e+00]
+PASS  mean_iou_2dp == legacy grouped_inter_union.csv Inter/Union (30 rows)  [max |diff| 7.77e-16]

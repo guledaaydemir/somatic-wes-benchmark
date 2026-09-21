@@ -1,0 +1,16 @@
+runs: 480; pipelines: 120 (one per group of four runs); variants called by any pipeline: 16,692; truth variants: 1161
+the choice of the representative of a group changes the F1 curve by at most 1.8e-05
+
+consensus of the variants called by at least n pipelines:
+  best F1 0.94092 at n = 33 (fraction 0.275): 1,107 variants, precision 0.9639, recall 0.9190
+  best single pipeline: run 776 with F1 0.92182; gain +0.01910 = +2.07% (unrounded)
+  F1 within 1% of the maximum for n from 26 to 47
+
+against the manuscript text (F1 0.94 with at least 34 pipelines, +1.97%):
+  reproduced: 120 pipelines; the maximum F1 rounds to 0.94; F1 at n = 34 is 0.94086; +1.97% follows from the rounded 0.94
+  NOT reproduced: the maximum is at n = 33, not 34 (n = 34 is 5.2e-05 lower); the unrounded gain is +2.07%, not +1.97% (D16)
+the legacy consensus cells (203 to 211) were never executed, so there is no recorded legacy output to compare with
+SomaticSniper is not PASS-filtered (FILTER is '.' on every record; legacy exemption preserved); its votes inherit this
+not compared with legacy: pipelines.csv, the exact-n columns, the figure
+
+python 3.8.12 | pandas 2.0.0

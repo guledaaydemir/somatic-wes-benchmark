@@ -280,3 +280,86 @@ def test_vcf_census_counts_by_filter_and_type_and_tests_pass_as_a_token(tmp_path
         ["HighConf;PASS", True, "SNV", 2, 1],
         ["PASS;MedConf", True, "INS", 1, 0],
     ]
+
+
+def _toy_metadata():
+    return pd.DataFrame({
+        "TestCaseNo": ["TestCase 10", "TestCase 2", "TestCase 3", "TestCase 4", "TestCase 5"],
+        "HOW": ["e1", "e2", "e1", "e2", "e1"], "Caller": ["m", "m", "s", "s", "s"]})
+
+
+def test_study_runs_selects_renames_validates_and_indexes_by_run_number():
+    levels = {"Environment": ["e1", "e2"], "Caller": ["m", "s"]}
+    runs = io.study_runs(_toy_metadata(), ["10", "2", "3", "4"], levels, rename={"HOW": "Environment"})
+    assert runs.index.tolist() == [2, 3, 4, 10] and runs["TestCaseNo"].tolist() == ["2", "3", "4", "10"]
+    assert runs.index.name == "run"
+
+
+@pytest.mark.parametrize("keys, levels, match", [
+    (["10", "2", "99"], {"Environment": ["e1", "e2"]}, "without a metadata row"),
+    (["10", "2"], {"Environment": ["e1", "e2"], "Caller": ["m", "s"]}, "levels of Caller"),
+    (["10", "3"], {"Environment": ["e1", "e2"]}, "levels of Environment"),
+    (["10", "2", "3"], {"Nope": ["a"]}, "no column"),
+    (["10", "2", "3", "5"], {"Environment": ["e1", "e2"], "Caller": ["m", "s"]}, "one run per factor combination"),
+])
+def test_study_runs_rejects_bad_selections(keys, levels, match):
+    with pytest.raises(ValueError, match=match):
+        io.study_runs(_toy_metadata(), keys, levels, rename={"HOW": "Environment"})
+
+
+def test_study_runs_uses_the_named_key_column_and_rejects_missing_values():
+    meta = _toy_metadata().rename(columns={"TestCaseNo": "IDs"})
+    assert io.study_runs(meta, ["2"], {}, key_column="IDs").index.tolist() == [2]
+    meta.loc[0, "HOW"] = None
+    with pytest.raises(ValueError, match="missing values"):
+        io.study_runs(meta, ["10", "2"], {"HOW": ["e1", "e2"]}, key_column="IDs")
+
+
+def test_hms_to_seconds():
+    assert io.hms_to_seconds(["07:15:00", "0:00:01", "23:59:59"]).tolist() == [26100, 1, 86399]
+    for bad in (["1-03:00:00"], ["07:60:00"], ["24:00:00"], ["7:5:0"], [None]):
+        with pytest.raises(ValueError):
+            io.hms_to_seconds(bad)
+
+
+def test_sequencing_yield_orders_by_yield_and_validates(tmp_path):
+    p = tmp_path / "y.csv"
+    p.write_text("Sample,total_gb,tumour_coverage,normal_coverage\nEA,48.8,183,150\nLL,18.6,43,58\n")
+    got = io.sequencing_yield(str(p), ["EA", "LL"])
+    assert got["Sample"].tolist() == ["LL", "EA"] and got["total_gb"].tolist() == [18.6, 48.8]
+    for text, samples, match in [
+            ("Sample,total_gb\nEA,1\n", ["EA"], "columns"),
+            ("Sample,total_gb,tumour_coverage,normal_coverage\nEA,1,2,3\n", ["EA", "LL"], "each of"),
+            ("Sample,total_gb,tumour_coverage,normal_coverage\nEA,0,2,3\n", ["EA"], "positive"),
+            ("Sample,total_gb,tumour_coverage,normal_coverage\nEA,5,2,3\nLL,5,2,3\n", ["EA", "LL"], "same yield")]:
+        p.write_text(text)
+        with pytest.raises(ValueError, match=match):
+            io.sequencing_yield(str(p), samples)
+
+
+def test_key_is_indel_and_load_sets_reads_the_validated_cache_columns(tmp_path):
+    assert not io.key_is_indel("chr1_12345_A_T")
+    assert io.key_is_indel("chr1_12345_AT_A") and io.key_is_indel("chr1_12345_A_AT")
+    assert not io.key_is_indel("chrUn_KI270_1_5_G_C")  # underscores inside the contig name
+    p = tmp_path / "validated.csv"
+    pd.DataFrame({"testcase": ["bwa/strelka", "bwa/strelka", "novo/mutect"], "identifier": ["x", "y", "z"]}).to_csv(p, index=False)
+    assert io.load_sets(p) == {"bwa/strelka": {"x", "y"}, "novo/mutect": {"z"}}
+
+
+def test_filter_variants_by_bed_is_chromosome_aware_and_end_exclusive():
+    bed = pd.DataFrame({"chrom": ["chr1", "chr2"], "start": [10, 100], "end": [20, 110]})
+    keys = {"chr1_10_A_T", "chr1_19_A_T", "chr1_20_A_T", "chr1_105_A_T", "chr2_15_A_T", "chr2_105_A_T", "chrUn_KI1_5_C_G"}
+    assert io.filter_variants_by_bed(keys, bed) == {"chr1_10_A_T", "chr1_19_A_T", "chr2_105_A_T"}
+    # the chromosome-blind legacy filter also keeps chr1_105 (chr2's interval) and chr2_15 (chr1's interval)
+    blind = io.filter_variants_by_bed(keys, bed, chromosome_aware=False)
+    assert {"chr1_105_A_T", "chr2_15_A_T"} <= blind
+    assert io.filter_variants_by_bed(set(), bed) == set()
+
+
+def test_pipeline_runs_takes_the_first_run_of_each_group_in_run_order():
+    runs = pd.DataFrame({
+        "run": [2, 3, 4, 5, 6, 7], "TestCaseNo": ["2", "3", "4", "5", "6", "7"],
+        "Sample": ["A", "A", "A", "A", "B", "B"], "Mapper": ["m", "n", "m", "n", "m", "m"], "Env": list("xyxyxy")})
+    got = io.pipeline_runs(runs, ["Sample", "Mapper"])
+    assert got["TestCaseNo"].tolist() == ["2", "3", "6"] and got["run"].tolist() == [2, 3, 6]
+    assert got[["Sample", "Mapper"]].values.tolist() == [["A", "m"], ["A", "n"], ["B", "m"]]

@@ -1,0 +1,19 @@
+runs: 480; truth variants: 1161; F1 0.078-0.922 (mean 0.691)
+IoU, precision, recall and F1 reproduce the whole-study rows of union_metrics.csv (max |diff| 2.2e-16)
+printed legacy values reproduced: F1 by sample, F1 of the first runs, 7 factor-test lines (precision), 10 variance sources
+SomaticSniper is not PASS-filtered (FILTER is '.' on every record; legacy exemption preserved); its metrics inherit this
+
+ANOVA of F1: 7 factors, 127 terms, Type II sums of squares (D4); largest sources: {'C(VariantCaller)': 53.94, 'C(Center)': 19.39, 'C(Mapper):C(VariantCaller)': 7.96}
+Type III ANOVA (5 factors; environment and duplicates are replicates): residual df 360, residual 3.4e-09 of the total sum of squares; F 9.6e+05-2.9e+10; -log10(p) 646-1477
+  every one of the 31 terms has p far below 0.05 and below 1e-300; the residual comes from runs that differ only in environment and duplicate handling (D13)
+D6: the paired t-tests pair the k-th run of one level with the k-th of the other, in run order (as legacy). Pairs that differ in the tested setting alone:
+  Mapper: BWA vs BOWTIE: 240 of 240
+  baseRecalibration: YES vs NO: 72 of 240
+  isTrimmed: YES vs NO: 72 of 240
+  VariantCaller: Mutect vs SomaticSniper: 160 of 160
+  VariantCaller: Mutect vs Strelka: 160 of 160
+  VariantCaller: SomaticSniper vs Strelka: 160 of 160
+
+not compared with legacy: recall and F1 tests, pairing.csv, ANOVA terms below 1%, Type III F and p-values, the figures
+
+python 3.8.12 | pandas 2.0.0

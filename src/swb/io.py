@@ -135,6 +135,12 @@ def variant_set(df):
     return set(key)
 
 
+def key_is_indel(key):
+    """True if the REF or the ALT_1 of a CHROM_POS_REF_ALT1 key is not a single base."""
+    _, ref, alt = key.rsplit("_", 2)
+    return len(ref) != 1 or len(alt) != 1
+
+
 def parse_vcf(path, caller, indels=False):
     """(variant set, records read, records kept).
 
@@ -183,10 +189,16 @@ def save_sets(sets, path):
 
 
 def load_sets(path):
-    """{str(key): set} from a save_sets cache (key, variant), or from (Key, Identifier) columns: the legacy sets_dict.csv."""
+    """{str(key): set} from a save_sets cache (key, variant), or from (Key, Identifier) columns (the legacy
+    sets_dict.csv) or (testcase, identifier) columns (the legacy validated-VCF caches)."""
     read = pd.read_parquet if os.fspath(path).endswith(".parquet") else pd.read_csv
     df = read(path)
-    key, variant = ("key", "variant") if "key" in df.columns else ("Key", "Identifier")
+    if "key" in df.columns:
+        key, variant = "key", "variant"
+    elif "testcase" in df.columns:  # the validated-VCF caches
+        key, variant = "testcase", "identifier"
+    else:
+        key, variant = "Key", "Identifier"
     sets = df.groupby(key)[variant].apply(set).to_dict()
     return {str(k): v for k, v in sets.items()}
 
@@ -195,6 +207,83 @@ def write_csv(df, path, sort_by):
     """Sorted, index-free CSV so reruns are byte-identical."""
     _makedirs_for(path)
     df.sort_values(sort_by, kind="mergesort").to_csv(path, index=False)
+
+
+# --- study runs -----------------------------------------------------------
+
+def study_runs(metadata, keys, levels, key_column="TestCaseNo", rename=None):
+    """Metadata rows of the study runs, one per key, indexed by the run number (int) and validated.
+
+    key_column holds the run key in canon() form ("TestCase 269"; TestCases_Indels.csv calls it IDs). rename
+    renames columns first (config.METADATA_RENAME). The result gains TestCaseNo (the canon key) and run (the
+    sorted index). levels is {column: sorted list of levels}: each column must exist, have no missing values and
+    hold exactly those levels, and the runs must be one per combination of all of them. Raises ValueError.
+    """
+    df = metadata.rename(columns=rename or {}).copy()
+    df["TestCaseNo"] = df[key_column].map(canon)
+    if not df["TestCaseNo"].is_unique:
+        raise ValueError("duplicate run keys in the metadata")
+    keys = {canon(k) for k in keys}
+    absent = keys - set(df["TestCaseNo"])
+    if absent:
+        raise ValueError("runs without a metadata row: {}".format(sorted(absent, key=int)[:5]))
+    runs = df[df["TestCaseNo"].isin(keys)]
+    for col, want in levels.items():
+        if col not in runs.columns:
+            raise ValueError("no column " + col)
+        if runs[col].isna().any():
+            raise ValueError("missing values in " + col)
+        if sorted(runs[col].unique()) != want:
+            raise ValueError("levels of {}: {} instead of {}".format(col, sorted(runs[col].unique()), want))
+    if levels and runs.groupby(list(levels)).ngroups != len(runs):
+        raise ValueError("not one run per factor combination")
+    runs = runs.assign(run=runs["TestCaseNo"].astype(int))
+    return runs.set_index("run").sort_index()
+
+
+def pipeline_runs(runs, pipeline):
+    """The first run of every pipeline, in run order: one row per group of runs that share the `pipeline` columns.
+
+    runs has a run column (ascending) and TestCaseNo, e.g. io.study_runs(...).reset_index(). The four runs of a pipeline
+    that differ only in environment and duplicate handling are near-identical, so the choice of the first is
+    immaterial (notebook 08 checks this). Legacy: grouped.first() over the rows of vcfcomparison_df_full.
+    """
+    chosen = runs.groupby(list(pipeline), sort=True)["TestCaseNo"].first().reset_index()
+    chosen["run"] = chosen["TestCaseNo"].astype(int)
+    return chosen.sort_values("run").reset_index(drop=True)
+
+
+def hms_to_seconds(values):
+    """Seconds of 'H:MM:SS' strings (TestCases.csv ElapsedTime), as a Series of int; ValueError on anything else.
+
+    Under 24 hours only: the legacy time figure parsed them with the format %H:%M:%S.
+    """
+    text = pd.Series(values).astype(str)
+    if not text.str.fullmatch(r"\d{1,2}:\d{2}:\d{2}").all():
+        raise ValueError("elapsed times not in H:MM:SS form: {}".format(text[~text.str.fullmatch(r"\d{1,2}:\d{2}:\d{2}")].head(3).tolist()))
+    parts = text.str.split(":", expand=True).astype(int)
+    if (parts[0] > 23).any() or (parts[1] > 59).any() or (parts[2] > 59).any():
+        raise ValueError("elapsed time field out of range")
+    return parts[0] * 3600 + parts[1] * 60 + parts[2]
+
+
+def sequencing_yield(path, samples):
+    """DataFrame (Sample, total_gb, tumour_coverage, normal_coverage) of data/reference/sequencing_yield.csv, by increasing yield.
+
+    One row per sample in `samples`, positive numbers, and distinct yields (the panel order must not be ambiguous).
+    Raises ValueError otherwise.
+    """
+    table = pd.read_csv(path)
+    columns = ["Sample", "total_gb", "tumour_coverage", "normal_coverage"]
+    if list(table.columns) != columns:
+        raise ValueError("columns {} instead of {}".format(list(table.columns), columns))
+    if sorted(table["Sample"]) != sorted(samples):
+        raise ValueError("the yield table must hold each of {} once".format(sorted(samples)))
+    if not (table[columns[1:]] > 0).all().all():
+        raise ValueError("yield and coverage must be positive")
+    if not table["total_gb"].is_unique:
+        raise ValueError("two samples with the same yield: the panel order would be ambiguous")
+    return table.sort_values("total_gb").reset_index(drop=True)
 
 
 # --- inventory and census -------------------------------------------------
@@ -306,7 +395,7 @@ def unique_region_size(bed_df):
 
 def variants_to_df(variant_set_):
     """DataFrame (#CHROM, POS, REF, ALT) from CHROM_POS_REF_ALT1 keys (legacy: convert_to_vcf_df)."""
-    df = pd.DataFrame([v.split("_") for v in variant_set_], columns=["#CHROM", "POS", "REF", "ALT"])
+    df = pd.DataFrame([v.rsplit("_", 3) for v in variant_set_], columns=["#CHROM", "POS", "REF", "ALT"])  # contig names may hold "_"
     df["POS"] = df["POS"].astype(int)
     return df
 
@@ -406,3 +495,16 @@ def bed_filter(vcf_df, bed, invert_stringency=False,
         mask[rows] = _inside(regions.by_chrom.get(chrom, _NO_INTERVALS), pos[rows])
     final_mask = ~mask if invert_stringency else mask
     return ordered[final_mask].reset_index(drop=True)
+
+
+def filter_variants_by_bed(keys, bed, chromosome_aware=True):
+    """The CHROM_POS_REF_ALT1 keys inside the BED regions: bed_filter (start <= POS < end on the variant's own chromosome).
+
+    chromosome_aware=False uses bed_filter_legacy, which compares positions across chromosomes (D1); for comparison only.
+    bed is a BedRegions or a chrom/start/end DataFrame.
+    """
+    if not keys:
+        return set()
+    frame = variants_to_df(keys)
+    kept = bed_filter(frame, bed) if chromosome_aware else bed_filter_legacy(frame, bed, False)
+    return df_to_variants(kept)

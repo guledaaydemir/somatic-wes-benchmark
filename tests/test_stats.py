@@ -102,7 +102,7 @@ def test_fit_anova_saturated_with_an_empty_cell_raises():
 
 def test_fit_anova_rejects_other_types():
     with pytest.raises(ValueError, match="typ"):
-        stats.fit_anova(balanced(), "y", ["a", "b"], typ=3)
+        stats.fit_anova(balanced(), "y", ["a", "b"], typ=4)
 
 
 def factor_frame():
@@ -145,3 +145,58 @@ def test_variance_pct_sorts_and_drops_small_sources():
     assert out.index.name == "Source"
     assert out["Result"].tolist() == pytest.approx([60.0, 29.5, 10.0])
     assert list(stats.variance_pct(table, min_pct=0).index) == ["B", "Residual", "A", "C"]
+
+
+def test_positional_pair_match_counts_pairs_that_differ_in_one_factor_only():
+    df = pd.DataFrame({
+        "a": ["x", "y", "x", "y", "x", "y"],
+        "b": ["p", "p", "q", "q", "p", "q"],   # x rows: p q p ; y rows: p q q -> pairs (p,p) (q,q) (p,q)
+    })
+    assert stats.positional_pair_match(df, "a", "x", "y", ["a", "b"]) == (3, 2)
+    # b == p rows have a = x, y, x and b == q rows have a = x, y, y: pairs (x,x) (y,y) (x,y)
+    assert stats.positional_pair_match(df, "b", "p", "q", ["a", "b"]) == (3, 2)
+
+
+def _replicated_frame(seed=3):
+    rng = np.random.RandomState(seed)
+    rows = [(a, b, c, rng.normal(10 + 3 * (a == "x") + 2 * (b == "p") + (a == "x") * (b == "p"), 0.5))
+            for a in ("x", "y") for b in ("p", "q") for c in range(5)]   # 5 runs in each of 4 cells: balanced
+    return pd.DataFrame(rows, columns=["a", "b", "rep", "y"])
+
+
+def test_fit_anova_type_three_needs_residual_df_and_equals_type_two_when_balanced():
+    df = _replicated_frame()
+    t3 = stats.fit_anova(df, "y", ["a", "b"], typ=3)
+    t2 = stats.fit_anova(df, "y", ["a", "b"], typ=2)
+    assert list(t3.index) == ["C(a)", "C(b)", "C(a):C(b)", "Residual"]
+    assert t3["sum_sq"].to_numpy() == pytest.approx(t2["sum_sq"].to_numpy())
+    assert t3["PR(>F)"].dropna().to_numpy() == pytest.approx(t2["PR(>F)"].dropna().to_numpy())
+    with pytest.raises(ValueError, match="saturated"):
+        stats.fit_anova(df.drop_duplicates(["a", "b"]), "y", ["a", "b"], typ=3)
+
+
+def test_fit_anova_type_three_differs_from_type_one_when_unbalanced():
+    df = _replicated_frame()
+    unbalanced = df[~((df["a"] == "x") & (df["b"] == "q") & (df["rep"] < 3))]
+    t1 = stats.fit_anova(unbalanced, "y", ["a", "b"], typ=1)
+    t3 = stats.fit_anova(unbalanced, "y", ["a", "b"], typ=3)
+    assert abs(t1.loc["C(a)", "sum_sq"] - t3.loc["C(a)", "sum_sq"]) > 1e-3
+    assert t3["sum_sq"].sum() < t1["sum_sq"].sum() + 1e-6  # Type III does not partition the total
+
+
+def test_term_label_uses_the_abbreviations_in_term_order():
+    assert stats.term_label("C(VariantCaller)") == "VC"
+    assert stats.term_label("C(Mapper):C(VariantCaller)") == "MP + VC"
+    assert stats.term_label("C(isTrimmed):C(baseRecalibration):C(Center)") == "TRM + BQSR + CEN"
+
+
+def test_neg_log10_p_series_agrees_with_scipy_and_does_not_underflow():
+    from scipy.stats import f as f_dist
+    for f_value, d1, d2 in [(300, 2, 100), (150, 4, 100), (500, 1, 60), (80, 8, 120), (2000, 2, 60), (1e6, 2, 100)]:
+        exact = -np.log10(f_dist.sf(f_value, d1, d2))
+        assert exact > 5
+        assert stats._neg_log10_p_series(f_value, d1, d2) == pytest.approx(exact, rel=1e-9)
+        assert stats.neg_log10_p(f_value, d1, d2) == pytest.approx(exact, rel=1e-9)
+    huge = stats.neg_log10_p(2.9e10, 2, 360)   # scipy's sf is 0 here
+    assert f_dist.sf(2.9e10, 2, 360) == 0 and np.isfinite(huge) and huge > 1000
+    assert stats.neg_log10_p(3e10, 2, 360) > huge  # still increasing with F

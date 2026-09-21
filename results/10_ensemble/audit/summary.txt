@@ -1,0 +1,21 @@
+runs: 480; pipelines: 120 (24 per center, one run per pipeline); truth variants: 1161
+combinations of 2 to 6 pipelines per center: 190,026; scored at every threshold k = 1 to n, 1,069,224 scores per center
+
+best F1 by number of pipelines (over centers and thresholds): 1: 0.9218, 2: 0.9261, 3: 0.9363, 4: 0.9362, 5: 0.9372, 6: 0.9374
+best 6-pipeline ensemble: IL F1 0.93736 at k = 4; best individual pipeline there 0.92182
+best threshold k at 6 pipelines by center: EA 4, FD 4, IL 4, LL 3, NC 4
+
+leave-one-center-out (5 folds):
+  selected (n, k) per held-out center: EA (6, 4), FD (6, 4), IL (6, 4), LL (6, 4), NC (6, 4)
+  held-out F1 0.8883 +/- 0.0431 (sample SD; 0.0386 with n in the denominator); mean gain over the best training pipeline +0.0176 (min +0.0104, max +0.0225)
+  pipelines in all five selected ensembles: 3;13; mean pairwise Jaccard 0.496 over 10 pairs
+  Illumina fold: F1 0.93291, 0.00445 below the best Illumina 6-pipeline ensemble (0.93736, k = 4); shares 2 of 6 members
+  the manuscript's 0.0045 is the difference of the 4-decimal values (0.0045); unrounded it is 0.00445
+
+all manuscript values above reproduce; the legacy notebook has no ensemble analysis, so nothing is compared with a legacy table
+the vectorised search equals ensemble_call + precision, recall, f1 exactly on 2,562 checked cases
+ties: the first maximum wins (smallest n, then lowest combination index, then lowest k); combination indices follow itertools.combinations over the 24 pipelines of pipelines.csv
+SomaticSniper is not PASS-filtered (FILTER is '.' on every record; legacy exemption preserved); ensembles containing it inherit this
+figure: all points drawn; the grey lines join a seeded sample of 2,000 combinations per panel; horizontal offsets are seeded
+
+python 3.8.12 | pandas 2.0.0 | numpy 1.24.2

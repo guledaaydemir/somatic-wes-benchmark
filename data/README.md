@@ -7,14 +7,14 @@ Everything the notebooks read is inside this repository. Paths are set in `src/s
 | Folder | Content | Size | In git |
 |---|---|---:|---|
 | `truth/` | truth-set VCFs: `hc_bed_filtered.recode.vcf` (1,161 SNVs), `hc_bed_filtered_INDELS.recode.vcf` (48 indels) | 1.8 MB | yes |
-| `reference/` | `TestCases.csv` (864 rows), `TestCases_Indels.csv` (320 rows), `sorted_exome_hc.bed.gz`, `stratification/*.bed.gz`, `validated_vcfs/`, `giab_regions/`, `Census_all.csv` | 857 MB (72 files) | yes |
-| `derived/` | legacy tables and caches, used as parity targets (`sets_dict.csv`, `vcfcomparison_df_full.csv`, `union_metrics.csv`, ...) | 92.6 MB (33 files) | yes |
+| `reference/` | `TestCases.csv` (864 rows), `TestCases_Indels.csv` (320 rows), `sequencing_yield.csv`, `sorted_exome_hc.bed.gz`, `stratification/*.bed.gz`, `validated_vcfs/`, `giab_regions/`, `Census_all.csv` | 857 MB (73 files) | yes |
+| `derived/` | legacy tables and caches, used as parity targets (`sets_dict.csv`, `vcfcomparison_df_full.csv`, `union_metrics.csv`, ...), plus two files of values printed by the legacy notebooks: `legacy_indel_iou_recorded.csv` (pairwise IoU, cells 38, 39 and 43 of the indel notebook; parity target of `02_pairwise_iou_indels`) and `legacy_metrics_recorded.csv` (F1 summaries, factor tests and variance table, cells 126 to 134; parity target of `05_metrics_anova`) | 92.6 MB (35 files) | yes |
 | `derived/sets_dict.parquet` | the variant-set cache built by notebook 01 (columns `key`, `variant`) | 1.4 MB | **no**, gitignored |
 | `raw/snv/` | the 480 SNV VCFs, one folder per run (section 4) | 3.94 GB (960 files: 480 `.vcf` + 480 `.vcf.gz`) | **no**, gitignored |
 | `raw/indel/` | the 320 indel VCFs, one folder per run | 179 MB (400 files: 320 `.vcf` + 80 `.vcf.gz`) | **no**, gitignored |
 | `raw/vcf_snps/`, `raw/vcf_indels/` | older copies of the raw VCFs, see below | 3.41 GB and 172 MB (measured) | **yes**, tracked since commit `e89c3ab` |
 
-Parts of `reference/` that no notebook reads (sizes measured): `giab_regions/` (uncompressed copies of the six `stratification/` BEDs, 257 MB), `validated_vcfs/` (520 MB), and the two `Census_all*.csv` files (identical to each other). The six `giab_regions/*.bed` files are stored with **Git LFS**; without `git-lfs` a clone holds small pointer files in their place (`git lfs pull` fetches the real files). Nothing else in the repository uses LFS.
+Parts of `reference/` that no notebook reads (sizes measured): `giab_regions/` (uncompressed copies of the six `stratification/` BEDs, 257 MB) and the two `Census_all*.csv` files (identical to each other). `validated_vcfs/` (520 MB) is read by notebook 06, except its folder `NV` (9 files), which is not one of the study's five centers. The six `giab_regions/*.bed` files are stored with **Git LFS**; without `git-lfs` a clone holds small pointer files in their place (`git lfs pull` fetches the real files). Nothing else in the repository uses LFS.
 
 **The raw VCFs are only partly in the repository.** `raw/vcf_snps/` holds 476 of the 480 SNV VCFs and `raw/vcf_indels/` holds all 320 indel VCFs (plus 10 `.vcf.gz`), under the old folder names. They are byte-identical (SHA-256) to the files in `raw/snv/` and `raw/indel/` on the author's disk, and they use the same `TestCase <N>/` folder layout. No notebook reads them. The four runs missing from `raw/vcf_snps/` are TestCase **26, 32, 38 and 44** (all EA, Altay + COSAP, BOWTIE, Mutect, duplicates MARK; the four `isTrimmed` x `baseRecalibration` combinations). Together the two old folders add about 3.6 GB to a checkout.
 
@@ -22,7 +22,7 @@ Parts of `reference/` that no notebook reads (sizes measured): `giab_regions/` (
 
 Only notebook 01 needs `raw/snv/`. It parses the 480 VCFs once and writes the cache `derived/sets_dict.parquet`. Every later notebook reads the cache and never re-parses a run VCF, unless it needs raw VCF fields and says so in its Purpose section. Notebook 00 lists and hashes `raw/` if it is present and runs without it.
 
-Current status: the cache is gitignored, so a fresh clone does not contain `sets_dict.parquet`, and notebook 07 (the only notebook after 01 so far) stops with "run 01_variant_sets first" until notebook 01 has run. The committed `derived/sets_dict.csv` holds the same sets in the legacy format (`Key`, `Identifier`); notebook 01's parity cell asserts they are equal for all 480 runs.
+Current status: the cache is gitignored, so a fresh clone does not contain `sets_dict.parquet`, and notebooks 02 and 07 (the notebooks after 01 that read the cache) stop with "run 01_variant_sets first" until notebook 01 has run. `02_pairwise_iou_indels` needs neither raw nor the parquet: it reads the committed `derived/sets_dict_indels.csv`, the legacy cache of the indel sets (no notebook parses the indel VCFs yet). The committed `derived/sets_dict.csv` holds the same sets in the legacy format (`Key`, `Identifier`); notebook 01's parity cell asserts they are equal for all 480 runs.
 
 ## 3. Obtaining the raw VCFs (to run notebook 01)
 
@@ -41,6 +41,8 @@ SRA study **SRP162370** (SEQC2 somatic whole-exome sequencing, HCC1395 tumour an
 | NC | SRR7890844 | SRR7890845 |
 
 Download with the SRA Toolkit, for example `prefetch SRR7890919 && fasterq-dump --split-files SRR7890919`.
+
+`reference/sequencing_yield.csv` holds the total bases (`total_gb`, tumour plus normal) and the tumour and normal coverage of each sample, as given in Table 1 of the manuscript. Notebook 03 prints them under the panels of its figure. They are not computed from anything in the repository. Checked against NCBI's run information: the summed bases of the two runs of LL, FD, NC and EA round to the tabulated values; for IL they sum to 65.88 Gb (Table 1: 65.8). Coverage cannot be checked there.
 
 ### 3.2 Pipeline configuration
 
@@ -99,7 +101,7 @@ cp -R data/raw/vcf_indels data/raw/indel   # 320 folders (the 10 extra .vcf.gz a
 ## 5. Verifying the files
 
 Notebook 00 writes the size and SHA-256 of every file to `results/00_data_preparation/tables/`:
-- `inventory_committed.csv`: `truth/`, `reference/` and the committed files of `derived/` (107 files);
+- `inventory_committed.csv`: `truth/`, `reference/` and the committed files of `derived/` (every committed file);
 - `inventory_local.csv`: `raw/snv/`, `raw/indel/` and `derived/sets_dict.parquet` (1,361 files).
 
 Commit both with the results so that they travel with the repository. Run this from the repository root (Python 3, standard library only). It checks your files against the author's checksums, skips `*.parquet` (rebuilt by notebook 01; its bytes can differ between pyarrow versions), and reports files that differ or are absent. Absent raw files are expected if you do not have `raw/`.
@@ -137,6 +139,6 @@ for table in ("inventory_committed", "inventory_local"):
             print("  {} {}".format(label, path))
 ```
 
-Expected on a correct checkout: `inventory_committed: 107 match, 0 differ, 0 absent`, and for `inventory_local` either `1360 match, 0 differ, 0 absent` (all raw files present) or `0 differ` with the raw files reported absent. Without `git-lfs` the six `giab_regions/*.bed` files show as `DIFFERS`; run `git lfs pull` (no notebook reads them). On Windows set `git config core.autocrlf false` before cloning, or line-ending conversion changes the hashes of the text files. For a single file, compare `shasum -a 256 <file>` (macOS) or `sha256sum <file>` (Linux) with its row in the CSV.
+Expected on a correct checkout: `inventory_committed: N match, 0 differ, 0 absent`, N being the number of rows in that CSV, and for `inventory_local` either `1360 match, 0 differ, 0 absent` (all raw files present) or `0 differ` with the raw files reported absent. Without `git-lfs` the six `giab_regions/*.bed` files show as `DIFFERS`; run `git lfs pull` (no notebook reads them). On Windows set `git config core.autocrlf false` before cloning, or line-ending conversion changes the hashes of the text files. For a single file, compare `shasum -a 256 <file>` (macOS) or `sha256sum <file>` (Linux) with its row in the CSV.
 
 You can also rerun notebook 00: `git diff --stat results/00_data_preparation/tables/inventory_committed.csv` prints nothing if the committed files are unchanged.

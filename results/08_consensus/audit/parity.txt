@@ -1,0 +1,9 @@
+parity: PASS (5 checks, 3 skipped)
+PASS  consensus curve == ensemble_call scored with precision, recall and f1, at every n (ge and eq)  [0 of 240 differ]
+PASS  120 pipelines (5 centers x 2 x 2 x 2 x 3)  [120 pipelines]
+PASS  the maximum F1 rounds to the manuscript's 0.94  [0.9409]
+PASS  F1 at the manuscript's n = 34 rounds to 0.94 and is within 1e-4 of the maximum  [F1 0.94086, maximum 0.94092]
+PASS  the manuscript's +1.97% follows from the rounded F1 0.94 and the best single pipeline  [1.9724% from 0.92182]
+SKIP  the manuscript's optimum at n = 34  [NOT REPRODUCED: the maximum F1 is at n = 33 (0.94092); n = 34 gives 0.94086 (D16)]
+SKIP  the manuscript's +1.97% from the unrounded F1  [NOT REPRODUCED: the unrounded gain is +2.07% (0.94092 against 0.92182) (D16)]
+SKIP  pipelines.csv, the exact-n columns and the figure  [the legacy consensus cells were never executed: there is no recorded output]

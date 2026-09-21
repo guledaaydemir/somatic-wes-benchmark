@@ -1,9 +1,9 @@
-inventory: 1468 files, 5,074,548,383 bytes; SHA-256 in tables/inventory_committed.csv and tables/inventory_local.csv
+inventory: 1468 files, 5,074,548,356 bytes; SHA-256 in tables/inventory_committed.csv and tables/inventory_local.csv
      tier         folder  n_files  total_bytes
 committed   data/derived       33     92618138
 committed data/reference       72    857323961
 committed     data/truth        2      1843913
-    local   data/derived        1      1362930
+    local   data/derived        1      1362903
     local data/raw/indel      400    178560305
     local   data/raw/snv      960   3942839136
 data/raw: data/raw/snv present, data/raw/indel present

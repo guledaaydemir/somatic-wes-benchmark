@@ -1,0 +1,48 @@
+source,kind,order,key,stat,value
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,1,ea,max,0.897905
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,1,ea,mean,0.739008
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,1,ea,min,0.498176
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,2,fd,max,0.831564
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,2,fd,mean,0.582887
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,2,fd,min,0.077949
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,3,il,max,0.921818
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,3,il,mean,0.76786
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,3,il,min,0.567988
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,4,ll,max,0.836089
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,4,ll,mean,0.616826
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,4,ll,min,0.140508
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,5,nc,max,0.880824
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,5,nc,mean,0.750047
+StabilityAnalysis.ipynb cell 126 output,f1_by_sample,5,nc,min,0.502053
+StabilityAnalysis.ipynb cell 132 output,f1_first_runs,1,2,f1_score,0.855491
+StabilityAnalysis.ipynb cell 132 output,f1_first_runs,2,8,f1_score,0.854329
+StabilityAnalysis.ipynb cell 132 output,f1_first_runs,3,14,f1_score,0.845966
+StabilityAnalysis.ipynb cell 132 output,f1_first_runs,4,20,f1_score,0.865721
+StabilityAnalysis.ipynb cell 132 output,f1_first_runs,5,26,f1_score,0.897905
+StabilityAnalysis.ipynb cell 126 output,f1_overall,7,all,mean,0.6913254035898414
+StabilityAnalysis.ipynb cell 126 output,f1_overall,8,all,max,0.9218181818181818
+StabilityAnalysis.ipynb cell 126 output,f1_overall,9,all,min,0.07794871794871795
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,0,Mapper,p_value,1.3774947912040284e-31
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,0,Mapper,statistic,13.601268942686488
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,2,Mutect vs. SomaticSniper,p_value,9.47905451982143e-75
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,2,Mutect vs. SomaticSniper,statistic,33.94847803013978
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,3,Mutect vs. Strelka,p_value,7.280379292737826e-46
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,3,Mutect vs. Strelka,statistic,20.24365637293486
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,4,SomaticSniper vs. Strelka,p_value,4.899188113862716e-15
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,4,SomaticSniper vs. Strelka,statistic,-8.664263305993952
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,6,variantCaller stats.f_oneway,p_value,6.653460684509058e-75
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,6,variantCaller stats.f_oneway,statistic,249.59331425230613
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,8,baseRecalibration,p_value,1.3774947912040284e-31
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,8,baseRecalibration,statistic,13.601268942686488
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,9,isTrimmed,p_value,0.4454870793555735
+StabilityAnalysis.ipynb cell 128 output,factor_test_precision,9,isTrimmed,statistic,0.7642248799759584
+StabilityAnalysis.ipynb cell 134 output,variance_pct,2,C(VariantCaller),percent,53.944526
+StabilityAnalysis.ipynb cell 134 output,variance_pct,3,C(Center),percent,19.391092
+StabilityAnalysis.ipynb cell 134 output,variance_pct,4,C(Mapper):C(VariantCaller),percent,7.963952
+StabilityAnalysis.ipynb cell 134 output,variance_pct,5,C(VariantCaller):C(Center),percent,3.578751
+StabilityAnalysis.ipynb cell 134 output,variance_pct,6,C(isTrimmed):C(Mapper):C(VariantCaller),percent,2.634789
+StabilityAnalysis.ipynb cell 134 output,variance_pct,7,C(isTrimmed):C(VariantCaller),percent,2.446385
+StabilityAnalysis.ipynb cell 134 output,variance_pct,8,C(isTrimmed):C(Mapper),percent,1.797745
+StabilityAnalysis.ipynb cell 134 output,variance_pct,9,C(isTrimmed),percent,1.590803
+StabilityAnalysis.ipynb cell 134 output,variance_pct,10,C(baseRecalibration),percent,1.237931
+StabilityAnalysis.ipynb cell 134 output,variance_pct,11,C(Mapper):C(VariantCaller):C(Center),percent,1.058242

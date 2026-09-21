@@ -1,0 +1,7 @@
+parity: PASS (4 checks, 2 skipped)
+PASS  truth variants per region == manuscript (38, 1,123, 43, 1,118, 294, 867)  [segmental duplications 38, outside segmental duplications 1123, low mappability and segmental duplications 43, outside low mappability and segmental duplications 1118, all difficult regions 294, outside all difficult regions 867]
+PASS  shares of the 1161 truth variants in difficult, low-mappability and segmental duplication regions == 25.3%, 3.7%, 3.3%  [all difficult regions 25.3%, low mappability and segmental duplications 3.7%, segmental duplications 3.3%]
+PASS  median F1 outside all difficult regions == 0.76  [0.7599]
+PASS  median F1 below 0.5 in segmental duplications and in low-mappability and segmental duplication regions  [0.491 and 0.472]
+SKIP  median F1 below 0.5 in all difficult regions (the text says 'difficult regions')  [NOT REPRODUCED for the stratification 'all difficult regions': its median is 0.642; the two most complex categories are below 0.5]
+SKIP  region_metrics.csv, region_summary.csv and the figure  [no legacy table holds these metrics: legacy scored region-filtered calls against the whole truth set (D9)]

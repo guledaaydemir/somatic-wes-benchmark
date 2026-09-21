@@ -1,0 +1,12 @@
+runs: 480; total elapsed time 1827 h; shortest 0.58 h, longest 13.06 h
+compute nodes: 83 distinct; the node is not controlled, so comparisons by setting are descriptive
+elapsed_seconds parsed from H:MM:SS (all under 24 h); equal to the legacy parse for every run
+df_timeTable.csv reproduced for every run: 9 columns and 2 figure labels
+not compared with legacy: elapsed_time_by_setting.csv (not in the legacy notebook)
+panel order (increasing total yield, manuscript Table 1): LL, FD, NC, EA, IL; annotations are not computed here
+median elapsed hours in that order: {'LL': 1.51, 'FD': 1.81, 'NC': 2.67, 'EA': 4.24, 'IL': 4.68}
+
+median elapsed hours by variant caller: {'Mutect': 6.76, 'SomaticSniper': 2.09, 'Strelka': 1.82}
+median elapsed hours by isTrimmed, baseRecalibration: {'NO, NO': 2.23, 'NO, YES': 3.78, 'YES, NO': 2.46, 'YES, YES': 3.74}
+
+python 3.8.12 | pandas 2.0.0

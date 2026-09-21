@@ -1,0 +1,6 @@
+parity: PASS (4 checks, 1 skipped)
+PASS  validated VCF file lists == legacy validated_vcfs_*_files.csv (5 centers x 9 files)  [differ: []]
+PASS  variant sets parsed from the reference VCFs == legacy validated_vcfs_*_sets.csv (45 files)  [0 differ: []]
+PASS  legacy cell 23's printed count 2388 is the LL intersection  [LL intersection 2388]
+PASS  it is not the EA intersection, which its label claimed (D14)  [EA intersection 2464]
+SKIP  validated_sets.csv, venn_regions.csv and the figure  [the legacy notebook printed one count and drew the figure; there are no other legacy numbers]

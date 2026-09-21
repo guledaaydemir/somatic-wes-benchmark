@@ -1,0 +1,2 @@
+folds,folds_choosing_manuscript_configuration,held_out_f1_mean,held_out_f1_sd,held_out_f1_sd_ddof0,gain_mean,gain_min,gain_max,shared_members_all_folds,shared_member_pipelines,jaccard_mean,jaccard_pairs,il_best_f1,il_best_k,il_fold_f1,il_fold_gap,il_fold_gap_rounded_values,il_fold_shared_with_best,n_combinations_searched
+5,5,0.8883226203326728,0.043118243354138656,0.038566129284093024,0.017584239599461694,0.010351220517046067,0.02248929042670711,2,3;13,0.4961904761904761,10,0.9373591707976565,4,0.9329102447869447,0.0044489260107117845,0.0045,2,190026

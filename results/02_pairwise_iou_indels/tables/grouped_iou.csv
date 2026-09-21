@@ -1,0 +1,31 @@
+Sample,Parameter,n_pairs,mean_iou_2dp,mean_iou
+EA,Base Recalibration,64,0.95625,0.9559945915990454
+FD,Base Recalibration,64,0.8675,0.866704710305056
+IL,Base Recalibration,64,0.83875,0.8372728696741855
+LL,Base Recalibration,64,0.84875,0.848242049525387
+NC,Base Recalibration,64,0.88375,0.8832088491857563
+EA,Computing Environment,64,1.0,1.0
+FD,Computing Environment,64,1.0,1.0
+IL,Computing Environment,64,1.0,1.0
+LL,Computing Environment,64,1.0,1.0
+NC,Computing Environment,64,1.0,1.0
+EA,Mapper,64,0.3525,0.3531045560747664
+FD,Mapper,64,0.4075,0.40677913395661613
+IL,Mapper,64,0.45125,0.4506199569584824
+LL,Mapper,64,0.41,0.40954655322539574
+NC,Mapper,64,0.49,0.49038114939946115
+EA,Mark Duplicates,64,1.0,1.0
+FD,Mark Duplicates,64,1.0,1.0
+IL,Mark Duplicates,64,1.0,1.0
+LL,Mark Duplicates,64,1.0,1.0
+NC,Mark Duplicates,64,1.0,1.0
+EA,Trimming,64,0.5399999999999999,0.540688117352204
+FD,Trimming,64,0.54375,0.544376159554731
+IL,Trimming,64,0.6825,0.682024828712793
+LL,Trimming,64,0.4125,0.4134810712935713
+NC,Trimming,64,0.5700000000000001,0.5715070536671822
+EA,Variant Caller,64,0.0,0.0
+FD,Variant Caller,64,0.0,0.0
+IL,Variant Caller,64,0.0025,0.0029778786159954623
+LL,Variant Caller,64,0.0,0.0
+NC,Variant Caller,64,0.0,0.0

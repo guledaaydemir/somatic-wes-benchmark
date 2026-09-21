@@ -1,0 +1,7 @@
+region,label,n_truth,fraction_of_truth,n_truth_chromosome_blind
+GRCh38_alldifficultregions,All difficult regions,294,0.2532299741602067,1058
+GRCh38_alllowmapandsegdupregions,Low mappability and segmental duplications,43,0.037037037037037035,859
+GRCh38_notinalldifficultregions,Outside all difficult regions,867,0.7467700258397932,1156
+GRCh38_notinalllowmapandsegdupregions,Outside low mappability and segmental duplications,1118,0.9629629629629629,1161
+GRCh38_notinsegdups,Outside segmental duplications,1123,0.967269595176572,1161
+GRCh38_segdups,Segmental duplications,38,0.03273040482342808,685

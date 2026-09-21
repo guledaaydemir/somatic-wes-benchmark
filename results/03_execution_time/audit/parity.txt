@@ -1,0 +1,7 @@
+parity: PASS (4 checks, 2 skipped)
+PASS  legacy df_timeTable.csv has the 480 runs, once each  [480 rows]
+PASS  settings, node and ElapsedTime == legacy df_timeTable (9 columns, every run)  [{}]
+PASS  figure labels 'baseRecalibration, isTrimmed' and 'Mapper, VariantCaller' == legacy  [{}]
+PASS  elapsed_seconds == the legacy %H:%M:%S parse (every run)  [480/480 equal]
+SKIP  elapsed_time_by_setting.csv (22 rows)  [not in the legacy notebook; computed from the verified time table]
+SKIP  sequencing yield and coverage under the figure panels  [from manuscript Table 1 (data/reference/sequencing_yield.csv), not derived from repository data; no legacy value]

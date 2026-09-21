@@ -1,0 +1,2 @@
+n_pipelines,best_n,best_n_fraction,consensus_size,precision,recall,f1,best_individual_run,best_individual_f1,gain_absolute,gain_relative_pct,f1_at_manuscript_n
+120,33,0.275,1107,0.96386630532972,0.9190353143841516,0.9409171075837742,776,0.9218181818181818,0.019098925765592467,2.0718755761490844,0.9408649602824359

@@ -1,0 +1,17 @@
+runs: 480; unordered pairs, self-pairs included: 115,440; ordered pairs compared with legacy: 230,400
+iou_2dp reproduces the legacy pair tables (all pairs and per sample) and grouped_inter_union.csv
+max |diff|: pairs 0.0e+00, grouped means 7.8e-16
+
+rounding to 2 decimals (D12, undecided): largest change of a pair 0.0050, of a grouped mean 0.0014
+
+grouped mean IoU (2 decimals) by parameter, range over the 5 samples; n_pairs = ordered pairs per sample:
+                       n_pairs  min_mean_iou_2dp  max_mean_iou_2dp
+Parameter                                                         
+Computing Environment       96          1.000000          1.000000
+Mapper                      96          0.505000          0.655000
+Variant Caller             192          0.338333          0.520833
+Base Recalibration          96          0.725833          0.908333
+Mark Duplicates             96          1.000000          1.000000
+Trimming                    96          0.670000          0.857500
+
+python 3.8.12 | pandas 2.0.0

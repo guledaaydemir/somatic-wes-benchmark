@@ -1,0 +1,28 @@
+runs: 480; regions: 6; truth variants: 1161; regions filtered with start <= POS < end on the variant's own chromosome
+
+truth variants in each region (chromosome-aware filter; the chromosome-blind legacy filter, D1, would keep):
+  Segmental duplications: 38 (3.3%); chromosome-blind 685
+  Outside segmental duplications: 1123 (96.7%); chromosome-blind 1161
+  Low mappability and segmental duplications: 43 (3.7%); chromosome-blind 859
+  Outside low mappability and segmental duplications: 1118 (96.3%); chromosome-blind 1161
+  All difficult regions: 294 (25.3%); chromosome-blind 1058
+  Outside all difficult regions: 867 (74.7%); chromosome-blind 1156
+
+median precision, recall and F1 per region:
+  Segmental duplications: 0.571, 0.645, 0.491
+  Outside segmental duplications: 0.682, 0.791, 0.709
+  Low mappability and segmental duplications: 0.571, 0.651, 0.472
+  Outside low mappability and segmental duplications: 0.682, 0.792, 0.710
+  All difficult regions: 0.601, 0.748, 0.642
+  Outside all difficult regions: 0.754, 0.793, 0.760
+
+interquartile range of precision, inside the region against outside it: segmental duplications 0.516 vs 0.303; low mappability and segmental duplications 0.494 vs 0.303; all difficult regions 0.456 vs 0.281
+runs with no call in a region (precision and F1 left blank): 4 in segmental duplications, 4 in low mappability and segmental duplications
+
+against the manuscript text: the six truth counts, the three shares, the median F1 of 0.76 outside difficult regions and the medians below 0.5 in the two most complex categories are reproduced
+  the text's 'below 0.5 in difficult regions' holds for segmental duplications and for low-mappability plus segmental duplication regions, not for 'all difficult regions' (0.642)
+the metric differs from legacy (D9): recall is TP / truth variants in the region, not TP / all truth variants
+SomaticSniper is not PASS-filtered (FILTER is '.' on every record; legacy exemption preserved); its metrics inherit this
+not compared with legacy: region_metrics.csv, region_summary.csv, the figure
+
+python 3.8.12 | pandas 2.0.0 | numpy 1.24.2
