@@ -1,6 +1,6 @@
 # Legacy deviations
 
-Legacy behaviours that look like bugs. Each entry: what the legacy code does, the evidence, and the decision. `src/swb/` reproduces the legacy behaviour unless stated (the one exception is `swb.io.bed_filter`, see D1); nothing else is changed without an explicit decision.
+Legacy behaviours that look like bugs. Each entry: what the legacy code does, the evidence, and the decision. `src/swb/` reproduces the legacy behaviour unless an entry says it was decided otherwise (D1, D4, D5, D6, D7); nothing else is changed without an explicit decision.
 Cell numbers are 0-based indices over all cells of `legacy/StabilityAnalysis.ipynb`.
 
 ## D1. BED filter ignores chromosomes
@@ -61,7 +61,7 @@ Evidence, headers of the 476 run VCFs held in `data/raw/vcf_snps` (4 of the 480 
 ## D6. "Mapper" t-test line prints baseRecalibration numbers
 Status: **decided**: legacy ported as `_legacy`, corrected version written for new analysis.
 
-Cell 128 prints `Mapper :: T-Test: t-statistic = {t_stat_br}, p-value = {p_value_ttest_br}`, which are the baseRecalibration values; the Mapper values are `t_stat_ma` / `p_value_ttest_ma`. **Any Mapper t-statistic or p-value read from that printed line is a baseRecalibration comparison and needs re-running.** The p-value annotated under "Mapper" in the box-plot of cell 129 comes from `p_value_ttest_ma` and is the Mapper one.
+Cell 128 prints `Mapper :: T-Test: t-statistic = {t_stat_br}, p-value = {p_value_ttest_br}`, which are the baseRecalibration values; the Mapper values are `t_stat_ma` / `p_value_ttest_ma`. **Any Mapper t-statistic or p-value read from that printed line is a baseRecalibration comparison and must be re-run** with `swb.stats.factor_tests`; this includes any such value in the manuscript. The repository does not show which of the two the manuscript quotes: the p-value annotated under "Mapper" in the box-plot of cell 129 comes from `p_value_ttest_ma` and is the Mapper one, so a Mapper value taken from the plot is not affected. Check each manuscript Mapper value against its source.
 
 Implementation: `swb.stats.factor_tests_legacy` reproduces the printed text as-is, mislabel included; `swb.stats.factor_tests` returns every comparison under its own label and is the one to use. Rows are still paired by position within each group, as in legacy; whether the row order aligns was not checked, and this is unchanged.
 
@@ -91,3 +91,12 @@ Cell 224 works differently from the others: it strips `GRCh38_` and a trailing `
 Status: **pending decision** (metric definitions are fixed; not changed here)
 
 Legacy scores each region-filtered call set against the *unfiltered* truth set (`get_precision/get_recall/get_f1score(filtered_variant_set, high_confidence)`, cells 215, 226, 237). Recall inside a region is therefore TP-in-region divided by all truth variants, and falls with the size of the region whatever the caller does. Confirmed by reproduction: computing the metrics against the unfiltered truth set (1,161 variants) reproduces all 2880 rows of `union_metrics.csv` to within 2.3e-16. Notebook 07 keeps this definition for both filters and states it in its purpose.
+
+## D10. Support fraction to support count
+Status: **decided.** Numbered D10 because D2 is the BED boundary convention (pending); this entry has no earlier number.
+
+`swb.metrics.fraction_to_count(q, n_lists)` transfers a consensus support fraction `q` to `n_lists` call sets, for `swb.metrics.ensemble_call`: `k = ceil(q * n_lists - 1e-9)`, clipped to `[1, n_lists]`. It raises `ValueError` if `q` is not in `(0, 1]` or `n_lists < 1`. Ceil keeps the transferred rule at least as strict as the rule it was chosen under. The epsilon absorbs float error on exact ratios: `7/25 * 25` is `7.000000000000001`, and a bare ceil gives 8 instead of 7. (`34/120 * 120` is exactly `34.0` in floating point and needs no guard, but other exact ratios do.)
+
+Values: `(34/120, 120) -> 34`, `(34/120, 96) -> 28`, `(34/120, 24) -> 7`, `(0.5, 24) -> 12`, `(1/96, 24) -> 1`, `(1.0, 24) -> 24`. `k` is non-decreasing in `q` and in `n_lists`.
+
+Tests in `tests/test_metrics.py`: `test_fraction_to_count_known_values`, `test_fraction_to_count_non_decreasing_in_q_and_in_n_lists`, `test_fraction_to_count_equals_exact_integer_ceil_on_rational_grid`, and the rejection tests. No legacy cell computing this conversion has been traced, so there is no legacy behaviour to reproduce.
