@@ -1,3 +1,4 @@
+run folders in data/raw/snv: 480
 runs parsed: 480
 variants in cache: 692587
 PASS filter applied to: Mutect, Strelka
@@ -5,7 +6,7 @@ PASS filter NOT applied to: SomaticSniper (FILTER is '.' on every record; legacy
 then: is_snp, single-base REF and ALT_1; key CHROM_POS_REF_ALT1
 records_read and records_kept are the only counts; legacy filtering_df 'After FilterPass' and
 'After RemoveIndels' both equal records_kept (D3), so they are not a filtering cascade
-cache: data/derived/sets_dict.parquet (Key, Identifier), sorted
+cache: data/derived/sets_dict.parquet (key, variant), sorted
 
 variants per run by caller:
                count  min  median   max

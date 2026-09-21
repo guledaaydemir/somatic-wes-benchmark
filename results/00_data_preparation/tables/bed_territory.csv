@@ -1,0 +1,2 @@
+bed,n_intervals,n_chromosomes,raw_sum_bp,merged_bp,overlap_bp
+data/reference/sorted_exome_hc.bed.gz,272014,22,80762432,80711709,50723

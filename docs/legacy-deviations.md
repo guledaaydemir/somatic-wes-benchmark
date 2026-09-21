@@ -100,3 +100,12 @@ Status: **decided.** Numbered D10 because D2 is the BED boundary convention (pen
 Values: `(34/120, 120) -> 34`, `(34/120, 96) -> 28`, `(34/120, 24) -> 7`, `(0.5, 24) -> 12`, `(1/96, 24) -> 1`, `(1.0, 24) -> 24`. `k` is non-decreasing in `q` and in `n_lists`.
 
 Tests in `tests/test_metrics.py`: `test_fraction_to_count_known_values`, `test_fraction_to_count_non_decreasing_in_q_and_in_n_lists`, `test_fraction_to_count_equals_exact_integer_ceil_on_rational_grid`, and the rejection tests. No legacy cell computing this conversion has been traced, so there is no legacy behaviour to reproduce.
+
+## D11. TMB territory counts overlapping BED intervals twice
+Status: **pending decision** (metric definitions are fixed; the legacy value is reproduced).
+
+`calculate_region_size` (cell 38) sums `end - start` over every line of the BED, so a base covered by two intervals counts twice. `sorted_exome_hc.bed.gz` has 272,014 intervals: raw sum 80,762,432 bp, merged unique length 80,711,709 bp, so 50,723 bp (0.063%) are counted twice. Notebook 00's `tables/bed_territory.csv` is the authoritative version of these numbers.
+
+The legacy TMB (`TMB` in `vcfcomparison_df_full.csv`, and `tmb_list_snp.csv`) equals variants per run divided by the raw sum in millions, for all 480 runs, to within 7.1e-15. The merged length does not reproduce it (largest difference 2.6e-2). Using the merged length would raise every TMB by 0.063%. Notebook 00 asserts both statements in its parity cell.
+
+Nothing computes TMB in `src/swb/` or the notebooks yet except `swb.metrics.tmb(n_variants, region_size_bp)`, which takes the territory as an argument. Open question: raw sum (legacy) or merged length for new analysis.

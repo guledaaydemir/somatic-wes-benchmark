@@ -61,3 +61,14 @@ def test_stem_registers_png_and_pdf(tmp_path):
         open(stem + ext, "w").write("x")
     stage.commit()
     assert (tmp_path / "figs" / "plot.png").exists() and (tmp_path / "figs" / "plot.pdf").exists()
+
+
+def test_skipped_checks_are_reported_but_do_not_fail_or_count_as_passed():
+    parity = audit.Parity()
+    parity.check("a", True)
+    parity.skip("raw paths", "data/raw absent")
+    assert parity.ok
+    assert parity.report() == "parity: PASS (1 checks, 1 skipped)\nPASS  a\nSKIP  raw paths  [data/raw absent]\n"
+    plain = audit.Parity()
+    plain.check("a", True)
+    assert plain.report() == "parity: PASS (1 checks)\nPASS  a\n"  # unchanged when nothing is skipped

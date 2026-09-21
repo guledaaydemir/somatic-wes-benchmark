@@ -1,0 +1,7 @@
+file,filter,has_pass,variant_type,n_records,n_multiallelic
+data/truth/hc_bed_filtered.recode.vcf,HighConf;PASS,True,SNV,1089,0
+data/truth/hc_bed_filtered.recode.vcf,MedConf;PASS,True,SNV,72,0
+data/truth/hc_bed_filtered_INDELS.recode.vcf,PASS;HighConf,True,DEL,43,0
+data/truth/hc_bed_filtered_INDELS.recode.vcf,PASS;HighConf,True,INS,2,0
+data/truth/hc_bed_filtered_INDELS.recode.vcf,PASS;MedConf,True,DEL,2,0
+data/truth/hc_bed_filtered_INDELS.recode.vcf,PASS;MedConf,True,INS,1,0

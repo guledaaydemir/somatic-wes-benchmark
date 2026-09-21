@@ -4,6 +4,7 @@ Ported from legacy/StabilityAnalysis.ipynb; each docstring names the legacy func
 Variant keys are CHROM_POS_REF_ALT1 strings, e.g. "chr1_12345_A_T".
 """
 import gzip
+import hashlib
 import os
 
 import numpy as np
@@ -168,12 +169,12 @@ def _makedirs_for(path):
 
 
 def save_sets(sets, path):
-    """Write {key: set} as (Key, Identifier) rows sorted by both; .parquet or .csv by suffix.
+    """Write {key: set} as (key, variant) rows sorted by both; .parquet or .csv by suffix.
 
     Keys with an empty set are not written (same as the legacy CSV cache).
     """
     rows = sorted((str(k), v) for k, s in sets.items() for v in s)
-    df = pd.DataFrame(rows, columns=["Key", "Identifier"])
+    df = pd.DataFrame(rows, columns=["key", "variant"])
     _makedirs_for(path)
     if os.fspath(path).endswith(".parquet"):
         df.to_parquet(path, index=False)
@@ -182,9 +183,11 @@ def save_sets(sets, path):
 
 
 def load_sets(path):
-    """{str(key): set} from a save_sets cache, or the legacy sets_dict.csv (Key, Identifier)."""
+    """{str(key): set} from a save_sets cache (key, variant), or from (Key, Identifier) columns: the legacy sets_dict.csv."""
     read = pd.read_parquet if os.fspath(path).endswith(".parquet") else pd.read_csv
-    sets = read(path).groupby("Key")["Identifier"].apply(set).to_dict()
+    df = read(path)
+    key, variant = ("key", "variant") if "key" in df.columns else ("Key", "Identifier")
+    sets = df.groupby(key)[variant].apply(set).to_dict()
     return {str(k): v for k, v in sets.items()}
 
 
@@ -192,6 +195,63 @@ def write_csv(df, path, sort_by):
     """Sorted, index-free CSV so reruns are byte-identical."""
     _makedirs_for(path)
     df.sort_values(sort_by, kind="mergesort").to_csv(path, index=False)
+
+
+# --- inventory and census -------------------------------------------------
+
+def file_inventory(root, base, exclude=frozenset({".DS_Store"})):
+    """DataFrame (path, size_bytes, sha256) of every file under root, sorted by path.
+
+    path is POSIX and relative to base. Skips macOS AppleDouble '._' files and excluded names. Files are
+    hashed in 1 MiB chunks.
+    """
+    rows = []
+    for dirpath, _, names in os.walk(os.fspath(root)):
+        for fn in names:
+            if fn.startswith("._") or fn in exclude:
+                continue
+            full = os.path.join(dirpath, fn)
+            digest = hashlib.sha256()
+            with open(full, "rb") as f:
+                for chunk in iter(lambda: f.read(1 << 20), b""):
+                    digest.update(chunk)
+            rel = os.path.relpath(full, os.fspath(base)).replace(os.sep, "/")
+            rows.append((rel, os.path.getsize(full), digest.hexdigest()))
+    return pd.DataFrame(sorted(rows), columns=["path", "size_bytes", "sha256"])
+
+
+def variant_type(ref, alt):
+    """'SNV', 'MNV' (equal length, more than one base), 'INS' or 'DEL' by REF and ALT length; else 'other'.
+
+    Symbolic alleles ('<DEL>', '*', '.') and breakends are 'other'. Lengths only: a substitution inside an
+    indel is not detected.
+    """
+    if not alt or alt[0] in "<*." or "[" in alt or "]" in alt:
+        return "other"
+    if len(ref) == len(alt):
+        return "SNV" if len(ref) == 1 else "MNV"
+    return "INS" if len(alt) > len(ref) else "DEL"
+
+
+def vcf_census(path):
+    """DataFrame (filter, has_pass, variant_type, n_records, n_multiallelic) of a VCF, one row per FILTER and type.
+
+    FILTER is reported as written (the truth VCFs use 'HighConf;PASS' and 'PASS;HighConf'); has_pass is
+    "PASS" in FILTER.split(";"). The type is that of the first ALT allele (as in the CHROM_POS_REF_ALT1 key);
+    n_multiallelic counts records with more than one ALT allele. Opens with errors="replace".
+    """
+    counts = {}
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if line.startswith("#") or not line.strip():
+                continue
+            fields = line.rstrip("\r\n").split("\t")
+            alts = fields[4].split(",")
+            key = (fields[6], "PASS" in fields[6].split(";"), variant_type(fields[3], alts[0]))
+            n, multi = counts.get(key, (0, 0))
+            counts[key] = (n + 1, multi + (len(alts) > 1))
+    rows = [(f, p, t, n, m) for (f, p, t), (n, m) in sorted(counts.items())]
+    return pd.DataFrame(rows, columns=["filter", "has_pass", "variant_type", "n_records", "n_multiallelic"])
 
 
 # --- BED regions ----------------------------------------------------------
@@ -202,9 +262,13 @@ def _open_bed(path):
 
 
 def read_bed(path):
-    """BED as chrom/start/end columns (legacy: pd.read_csv(..., sep='\\t', header=None, names=[...])). Reads .bed.gz."""
+    """BED as chrom/start/end columns (legacy: pd.read_csv(..., sep='\\t', header=None, names=[...])). Reads .bed.gz.
+
+    Only the first three columns are read: a wider BED (the exome BED has six) would otherwise turn its first
+    columns into the index.
+    """
     with _open_bed(path) as f:
-        return pd.read_csv(f, sep="\t", header=None, names=["chrom", "start", "end"])
+        return pd.read_csv(f, sep="\t", header=None, usecols=[0, 1, 2], names=["chrom", "start", "end"])
 
 
 def region_size(bed_file):

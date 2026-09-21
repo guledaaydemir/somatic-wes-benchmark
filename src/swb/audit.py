@@ -55,6 +55,10 @@ class Parity:
 
     def __init__(self):
         self.checks = []
+        self.skipped = []  # (name, reason): checks that could not run; they do not count as passed
+
+    def skip(self, name, reason):
+        self.skipped.append((name, str(reason)))
 
     def check(self, name, ok, detail=""):
         self.checks.append((name, bool(ok), str(detail)))
@@ -64,10 +68,13 @@ class Parity:
         return all(ok for _, ok, _ in self.checks)
 
     def report(self):
-        head = "parity: {} ({} checks)".format("PASS" if self.ok else "FAIL", len(self.checks))
+        skipped = ", {} skipped".format(len(self.skipped)) if self.skipped else ""
+        head = "parity: {} ({} checks{})".format("PASS" if self.ok else "FAIL", len(self.checks), skipped)
         lines = [head]
         for name, ok, detail in self.checks:
             lines.append("{}  {}{}".format("PASS" if ok else "FAIL", name, "  [" + detail + "]" if detail else ""))
+        for name, reason in self.skipped:
+            lines.append("SKIP  {}  [{}]".format(name, reason))
         return "\n".join(lines) + "\n"
 
     def finish(self, path, stage=None):

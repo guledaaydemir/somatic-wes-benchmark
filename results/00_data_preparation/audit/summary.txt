@@ -1,7 +1,20 @@
-runs: 480
-design: 5 Sample x 2 Environment x 2 isTrimmed x 2 baseRecalibration x 2 Mapper x 3 VariantCaller x 2 Duplicates, one run per combination
-TestCases.csv rows: 864 (rows without a VCF folder are not runs)
-VCF folders with a real VCF: 480; AppleDouble '._' files skipped: 0
-join: canon(TestCaseNo); equals the legacy row-position join for all 864 rows
-truth VCF and exome BED present and non-empty
-python 3.8.12 | pandas 2.0.0
+inventory: 1468 files, 5,074,548,383 bytes; SHA-256 in tables/inventory_committed.csv and tables/inventory_local.csv
+     tier         folder  n_files  total_bytes
+committed   data/derived       33     92618138
+committed data/reference       72    857323961
+committed     data/truth        2      1843913
+    local   data/derived        1      1362930
+    local data/raw/indel      400    178560305
+    local   data/raw/snv      960   3942839136
+data/raw: data/raw/snv present, data/raw/indel present
+AppleDouble '._' files skipped: 0
+
+exome BED data/reference/sorted_exome_hc.bed.gz: 272,014 intervals on 22 chromosomes
+  raw sum 80,762,432 bp; merged unique 80,711,709 bp; overlap 50,723 bp (0.063% of the raw sum)
+  legacy TMB divides by the raw sum (max |diff| 7.1e-15); the merged length gives max |diff| 2.6e-02 (D11, undecided)
+
+truth VCFs (FILTER tested as a token; the two files order it differently):
+  data/truth/hc_bed_filtered.recode.vcf: 1161 records; types {'SNV': 1161}; FILTER {'HighConf;PASS': 1089, 'MedConf;PASS': 72}
+  data/truth/hc_bed_filtered_INDELS.recode.vcf: 48 records; types {'DEL': 45, 'INS': 3}; FILTER {'PASS;HighConf': 45, 'PASS;MedConf': 3}
+
+python 3.8.12 | pandas 2.0.0 | numpy 1.24.2

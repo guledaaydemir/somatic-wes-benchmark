@@ -14,7 +14,7 @@ Working rules are in `CLAUDE.md`. The repository is self-contained: every path i
 
 ## Running the notebooks
 
-Run them in the order below. Notebooks 00 and 01 need the raw VCFs in `data/raw/snv/` (see `data/README.md`).
+Run them in the order below. Notebook 01 needs the raw VCFs in `data/raw/snv/` (see `data/README.md`); notebook 00 runs without them.
 
 1. **Environment.** Create it once from `environment.yml` (or reuse `mywork2_rebuild_env` if it already exists), then activate it:
    ```bash
@@ -36,11 +36,11 @@ Run them in the order below. Notebooks 00 and 01 need the raw VCFs in `data/raw/
 
    | Order | Notebook | Needs | Writes |
    |---|---|---|---|
-   | 1 | `00_data_preparation` | `data/raw/snv/`, `data/reference/TestCases.csv`, `data/truth/hc_bed_filtered.recode.vcf`, `data/reference/sorted_exome_hc.bed.gz` | `results/00_data_preparation/` (`run_manifest.csv`) |
-   | 2 | `01_variant_sets` | notebook 00's manifest; parses all 480 VCFs on the drive | `data/derived/sets_dict.parquet`, `results/01_variant_sets/` |
-   | 3 | `07_stratification` | notebooks 00 and 01, `data/truth/hc_bed_filtered.recode.vcf`, `data/reference/stratification/*.bed.gz` | `results/07_stratification/` |
+   | 1 | `00_data_preparation` | the committed files in `data/truth/`, `data/reference/`, `data/derived/`; `data/raw/` is optional (listed and hashed if present) | `results/00_data_preparation/` (file inventory with SHA-256, BED territory, truth-VCF census) |
+   | 2 | `01_variant_sets` | `data/raw/snv/` (480 run folders; parses every VCF), `data/reference/TestCases.csv` | `data/derived/sets_dict.parquet`, `results/01_variant_sets/` |
+   | 3 | `07_stratification` | notebook 01's cache, `results/00_data_preparation/tables/run_manifest.csv` (committed; no notebook regenerates it any more), `data/truth/hc_bed_filtered.recode.vcf`, `data/reference/stratification/*.bed.gz` | `results/07_stratification/` |
 
-   Notebooks 02 to 06 are not written yet. Each notebook needs the one before it in the table, and 07 reads the cache written by 01, so a later notebook never re-parses the run VCFs. Every notebook also reads the legacy caches in `data/derived/` for its parity check.
+   Notebooks 02 to 06 are not written yet. Notebook 07 reads the cache written by 01, so a later notebook never re-parses the run VCFs. Every notebook also reads the legacy caches in `data/derived/` for its parity check.
 
 **Parity.** The last code cells check the notebook's outputs against the legacy values. If a check fails the notebook raises `AssertionError`, only `audit/parity.txt` (marked FAIL) is written, and no tables, figures or cache appear. On success the outputs are moved into place and `audit/summary.txt` is written. Running a notebook again overwrites its outputs with identical files.
 

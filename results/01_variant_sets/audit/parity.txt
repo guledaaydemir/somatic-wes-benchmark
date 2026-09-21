@@ -1,9 +1,11 @@
-parity: PASS (8 checks)
+parity: PASS (10 checks)
 PASS  legacy Result VCF Count is complete
+PASS  cache columns are key, variant, sorted
 PASS  cache holds exactly the 480 legacy run keys  [480 runs]
 PASS  cache round-trips the parsed sets
-PASS  variants per run == legacy Result VCF Count (every run)  [0 of 480 differ: []]
+PASS  variants per run == legacy Result VCF Count (every run)  [480/480 match]
 PASS  variant sets == legacy sets_dict.csv (every run)  [0 differ: []]
+PASS  run metadata == legacy vcfcomparison_df_full (21 columns)  [{}]
 PASS  records read == legacy filtering_df Total Length
 PASS  records kept == legacy filtering_df 'After FilterPass' (count after all filters, not a cascade; D3)
 PASS  records kept == legacy filtering_df 'After RemoveIndels' (count after all filters, not a cascade; D3)

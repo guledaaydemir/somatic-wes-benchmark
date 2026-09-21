@@ -1,4 +1,9 @@
-parity: PASS (3 checks)
-PASS  run keys == legacy vcfcomparison_df_full  [480 runs]
-PASS  VCF paths == legacy vcf_filenames.csv
-PASS  metadata columns == legacy (21 columns)  [{}]
+parity: PASS (8 checks)
+PASS  legacy caches are in the committed inventory
+PASS  legacy sets_dict.csv variants per run == legacy Result VCF Count  [480/480 match]
+PASS  legacy TMB == variants / (raw-sum territory / 1e6), all 480 runs, both legacy tables  [max |diff| 7.11e-15]
+PASS  legacy TMB is not reproduced by the merged territory (D11)  [max |diff| 2.57e-02 vs vcfcomparison_df_full, 2.57e-02 vs tmb_list_snp]
+PASS  truth SNV set size == SNV records of the truth VCF census  [1161 variants]
+PASS  whole-study rows of union_metrics.csv == legacy sets vs truth set (all 1440 rows)  [max |diff| 2.22e-16]
+PASS  data/raw/snv: 480 run VCFs, one per folder, paths == legacy file list  [480 folders, 480 VCFs]
+PASS  data/raw/indel: 320 run VCFs, one per folder, paths == legacy file list  [320 folders, 320 VCFs]

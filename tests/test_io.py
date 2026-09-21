@@ -171,6 +171,21 @@ def test_load_sets_stringifies_integer_keys(tmp_path):
     assert io.load_sets(p) == {"296": {"x", "y"}, "606": {"z"}}
 
 
+def test_save_sets_writes_key_and_variant_columns(tmp_path):
+    for name in ("s.parquet", "s.csv"):
+        io.save_sets({"b": {"chr1_2_A_T", "chr1_1_A_T"}, "a": {"chr2_5_G_C"}}, tmp_path / name)
+        read = pd.read_parquet if name.endswith(".parquet") else pd.read_csv
+        df = read(tmp_path / name)
+        assert list(df.columns) == ["key", "variant"]
+        assert df.values.tolist() == [["a", "chr2_5_G_C"], ["b", "chr1_1_A_T"], ["b", "chr1_2_A_T"]]
+
+
+def test_load_sets_reads_caches_written_with_key_identifier_columns(tmp_path):
+    p = tmp_path / "old.parquet"
+    pd.DataFrame({"Key": ["1", "1", "2"], "Identifier": ["x", "y", "z"]}).to_parquet(p, index=False)
+    assert io.load_sets(p) == {"1": {"x", "y"}, "2": {"z"}}
+
+
 def test_write_csv_sorted_without_index(tmp_path):
     p = tmp_path / "sub" / "t.csv"
     io.write_csv(pd.DataFrame({"k": ["b", "a"], "v": [1, 2]}), p, sort_by="k")
@@ -213,3 +228,55 @@ def test_bed_gz_is_read_with_gzip(tmp_path):
     assert [x.split("/")[-1] for x in io.bed_files(str(tmp_path))] == ["r.bed.gz"]
     assert io.region_size(p) == 20
     assert io.read_bed(p).values.tolist() == [["chr1", 0, 10], ["chr1", 5, 15]]
+
+
+def test_read_bed_keeps_only_the_first_three_columns(tmp_path):
+    p = tmp_path / "wide.bed"
+    p.write_text("chr1\t10\t20\tgene_a\t0\t+\nchr2\t5\t9\tgene_b\t0\t-\n")
+    bed = io.read_bed(str(p))
+    assert list(bed.columns) == ["chrom", "start", "end"] and not isinstance(bed.index, pd.MultiIndex)
+    assert bed.values.tolist() == [["chr1", 10, 20], ["chr2", 5, 9]]
+    assert io.region_size(str(p)) == 14
+
+
+def test_file_inventory_hashes_sorts_and_skips_appledouble(tmp_path):
+    (tmp_path / "sub").mkdir()
+    (tmp_path / "sub" / "b.txt").write_bytes(b"abc")
+    (tmp_path / "a.txt").write_bytes(b"")
+    (tmp_path / "._a.txt").write_bytes(b"x")
+    (tmp_path / ".DS_Store").write_bytes(b"x")
+    inv = io.file_inventory(str(tmp_path), str(tmp_path))
+    assert list(inv.columns) == ["path", "size_bytes", "sha256"]
+    assert inv["path"].tolist() == ["a.txt", "sub/b.txt"]
+    assert inv["size_bytes"].tolist() == [0, 3]
+    assert inv["sha256"].tolist() == [
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",  # sha256 of b""
+        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",  # sha256 of b"abc"
+    ]
+    assert io.file_inventory(str(tmp_path / "sub"), str(tmp_path))["path"].tolist() == ["sub/b.txt"]
+    assert io.file_inventory(str(tmp_path / "empty"), str(tmp_path)).empty
+
+
+@pytest.mark.parametrize("ref, alt, want", [
+    ("A", "T", "SNV"), ("AC", "GT", "MNV"), ("A", "AT", "INS"), ("AT", "A", "DEL"), ("AT", "G", "DEL"),
+    ("A", "<DEL>", "other"), ("A", "*", "other"), ("A", "A]chr2:5]", "other"), ("A", ".", "other"),
+])
+def test_variant_type(ref, alt, want):
+    assert io.variant_type(ref, alt) == want
+
+
+def test_vcf_census_counts_by_filter_and_type_and_tests_pass_as_a_token(tmp_path):
+    p = tmp_path / "t.vcf"
+    p.write_bytes(
+        b"##fileformat=VCFv4.1\n##note=caf\xe9\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n"
+        b"chr1\t1\t.\tA\tT\t.\tHighConf;PASS\t.\n"
+        b"chr1\t2\t.\tA\tG,C\t.\tHighConf;PASS\t.\n"
+        b"chr1\t3\t.\tA\tAT\t.\tPASS;MedConf\t.\n"
+        b"chr1\t4\t.\tAT\tA\t.\t.\t.\n"
+    )
+    got = io.vcf_census(str(p))
+    assert got.values.tolist() == [
+        [".", False, "DEL", 1, 0],
+        ["HighConf;PASS", True, "SNV", 2, 1],
+        ["PASS;MedConf", True, "INS", 1, 0],
+    ]

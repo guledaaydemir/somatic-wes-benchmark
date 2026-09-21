@@ -25,9 +25,11 @@ MANIFEST = RESULTS / "00_data_preparation" / "tables" / "run_manifest.csv"
 # --- legacy caches (copies of the legacy notebook's outputs, used for parity) --
 LEGACY_METADATA = DERIVED / "vcfcomparison_df_full.csv"
 LEGACY_FILENAMES = DERIVED / "vcf_filenames.csv"
+LEGACY_FILENAMES_INDELS = DERIVED / "vcf_filenames_indels.csv"
 LEGACY_SETS = DERIVED / "sets_dict.csv"
 LEGACY_FILTERING = DERIVED / "filtering_df.csv"
 LEGACY_UNION_METRICS = DERIVED / "union_metrics.csv"
+LEGACY_TMB = DERIVED / "tmb_list_snp.csv"
 
 # --- TestCases.csv schema (24 columns; the indel file has a different one) --
 METADATA_COLUMNS = [
