@@ -1,24 +1,23 @@
-"""Paths and constants. Reads SWB_DATA_ROOT (default: /Volumes/E4 Pro/Bioinformatics-StabilityAnalysis).
-
-DATA_ROOT holds the raw inputs (vcf/...); everything else lives inside the repository.
-"""
-import os
+"""Paths and constants. Every path is relative to the repository root; nothing is read from outside it."""
 from pathlib import Path
 
 SEED = 0
 
-# --- external drive -------------------------------------------------------
-DATA_ROOT = Path(os.environ.get("SWB_DATA_ROOT", "/Volumes/E4 Pro/Bioinformatics-StabilityAnalysis"))
-VCF_DIR = DATA_ROOT / "vcf" / "TESTCASES_bedded"
-METADATA_CSV = DATA_ROOT / "vcf" / "TestCases.csv"
-TRUTH_VCF = DATA_ROOT / "vcf" / "hc_bed_filtered.recode.vcf"
-EXOME_BED = DATA_ROOT / "vcf" / "sorted_exome_hc.bed"
-STRATIFICATION_DIR = DATA_ROOT / "vcf" / "genome_stratifications"
-
-# --- repository -----------------------------------------------------------
+# --- repository layout ----------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DERIVED = REPO_ROOT / "data" / "derived"
+DATA = REPO_ROOT / "data"
+RAW_SNV = DATA / "raw" / "snv"        # 480 per-run SNV VCFs   (gitignored)
+RAW_INDEL = DATA / "raw" / "indel"    # 320 per-run indel VCFs (gitignored)
+TRUTH = DATA / "truth"
+REFERENCE = DATA / "reference"
+DERIVED = DATA / "derived"
 RESULTS = REPO_ROOT / "results"
+
+# --- inputs ---------------------------------------------------------------
+METADATA_CSV = REFERENCE / "TestCases.csv"
+TRUTH_VCF = TRUTH / "hc_bed_filtered.recode.vcf"
+EXOME_BED = REFERENCE / "sorted_exome_hc.bed.gz"
+STRATIFICATION_DIR = REFERENCE / "stratification"    # *.bed.gz
 
 SETS_PARQUET = DERIVED / "sets_dict.parquet"
 MANIFEST = RESULTS / "00_data_preparation" / "tables" / "run_manifest.csv"

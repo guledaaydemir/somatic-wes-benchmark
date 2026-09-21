@@ -3,6 +3,7 @@
 Ported from legacy/StabilityAnalysis.ipynb; each docstring names the legacy function it replaces.
 Variant keys are CHROM_POS_REF_ALT1 strings, e.g. "chr1_12345_A_T".
 """
+import gzip
 import os
 
 import numpy as np
@@ -11,6 +12,7 @@ import pandas as pd
 SOMATICSNIPER = "SomaticSniper"
 KEY_COLUMNS = ["CHROM", "POS", "REF", "ALT_1"]
 EXCLUDED_NAMES = frozenset({".DS_Store", "fixed.recode.vcf", "gatk.recode.vcf"})
+BED_SUFFIXES = (".bed", ".bed.gz")
 
 
 # --- file discovery -------------------------------------------------------
@@ -48,11 +50,11 @@ def validated_vcf_files(prefix):
 
 
 def bed_files(directory):
-    """Sorted '.bed' paths directly in directory, skipping '._' files (legacy: get_bed_file_names)."""
+    """Sorted '.bed' and '.bed.gz' paths directly in directory, skipping '._' files (legacy: get_bed_file_names)."""
     return sorted(
         os.path.join(directory, f)
         for f in os.listdir(directory)
-        if f.endswith(".bed") and not f.startswith("._")
+        if f.endswith(BED_SUFFIXES) and not f.startswith("._")
     )
 
 
@@ -194,15 +196,21 @@ def write_csv(df, path, sort_by):
 
 # --- BED regions ----------------------------------------------------------
 
+def _open_bed(path):
+    """Text handle for a BED file; '.gz' is opened with gzip."""
+    return gzip.open(path, "rt") if str(path).endswith(".gz") else open(path, "r")
+
+
 def read_bed(path):
-    """BED as chrom/start/end columns (legacy: pd.read_csv(..., sep='\\t', header=None, names=[...]))."""
-    return pd.read_csv(path, sep="\t", header=None, names=["chrom", "start", "end"])
+    """BED as chrom/start/end columns (legacy: pd.read_csv(..., sep='\\t', header=None, names=[...])). Reads .bed.gz."""
+    with _open_bed(path) as f:
+        return pd.read_csv(f, sep="\t", header=None, names=["chrom", "start", "end"])
 
 
 def region_size(bed_file):
     """Sum of (end - start) over BED lines, overlaps counted twice (legacy: calculate_region_size)."""
     size = 0
-    with open(bed_file, "r") as f:
+    with _open_bed(bed_file) as f:
         for line in f:
             fields = line.strip().split("\t")
             size += int(fields[2]) - int(fields[1])

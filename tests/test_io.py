@@ -1,4 +1,6 @@
 """Toy-data checks for swb.io: hazards from CLAUDE.md, filters, keys, caches, BED helpers."""
+import gzip
+
 import pandas as pd
 import pytest
 
@@ -201,3 +203,13 @@ def test_region_size_sums_lines_without_merging(tmp_path):
     p.write_text("chr1\t0\t10\nchr1\t5\t15\n")
     assert io.region_size(str(p)) == 20  # overlap counted twice, as in legacy
     assert io.read_bed(str(p)).shape == (2, 3)
+
+
+def test_bed_gz_is_read_with_gzip(tmp_path):
+    text = b"chr1\t0\t10\nchr1\t5\t15\n"
+    (tmp_path / "r.bed.gz").write_bytes(gzip.compress(text))
+    (tmp_path / "._r.bed.gz").write_bytes(b"\x00")
+    p = str(tmp_path / "r.bed.gz")
+    assert [x.split("/")[-1] for x in io.bed_files(str(tmp_path))] == ["r.bed.gz"]
+    assert io.region_size(p) == 20
+    assert io.read_bed(p).values.tolist() == [["chr1", 0, 10], ["chr1", 5, 15]]
